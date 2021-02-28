@@ -1,7 +1,11 @@
 package log;
 
+import utils.LimitedQueue;
+
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 
 /**
  * Что починить:
@@ -13,14 +17,12 @@ import java.util.Collections;
  * ограниченного размера)
  */
 public class LogWindowSource {
-    private final ArrayList<LogEntry> m_messages;
+    private final LimitedQueue<LogEntry> m_messages;
     private final ArrayList<LogChangeListener> m_listeners;
-    private final int m_iQueueLength;
     private volatile LogChangeListener[] m_activeListeners;
 
     public LogWindowSource(int iQueueLength) {
-        m_iQueueLength = iQueueLength;
-        m_messages = new ArrayList<>(iQueueLength);
+        m_messages = new LimitedQueue<>(iQueueLength);
         m_listeners = new ArrayList<>();
     }
 

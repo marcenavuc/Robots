@@ -38,6 +38,7 @@ public class LogWindowSource {
     }
 
     public void append(LogLevel logLevel, String strMessage) {
+        // создание сообщения
         LogEntry entry = new LogEntry(logLevel, strMessage);
         m_messages.add(entry);
         LogChangeListener[] activeListeners = m_activeListeners;

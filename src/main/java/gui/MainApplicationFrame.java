@@ -7,6 +7,9 @@ import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 public class MainApplicationFrame extends JFrame {
     private final JDesktopPane desktopPane = new JDesktopPane();
@@ -34,6 +37,7 @@ public class MainApplicationFrame extends JFrame {
     }
 
     protected GameWindow createGameWindow(Robots robot) {
+        robot.setSize(400, 400);
         GameWindow gameWindow = new GameWindow(robot);
         gameWindow.setSize(400, 400);
         gameWindow.addInternalFrameListener(new InternalFrameAdapter() {
@@ -41,6 +45,12 @@ public class MainApplicationFrame extends JFrame {
             public void internalFrameClosing(InternalFrameEvent event){
                 super.internalFrameClosing(event);
                 addOptionPane(event);
+            }
+        });
+        gameWindow.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                robot.setSize(gameWindow.getWidth(), gameWindow.getHeight());
             }
         });
         return gameWindow;

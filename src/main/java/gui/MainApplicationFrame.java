@@ -1,10 +1,10 @@
 package gui;
 
 import log.Logger;
+import utils.Robots;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 
 public class MainApplicationFrame extends JFrame {
     private final JDesktopPane desktopPane = new JDesktopPane();
@@ -24,7 +24,9 @@ public class MainApplicationFrame extends JFrame {
         LogWindow logWindow = createLogWindow();
         addWindow(logWindow);
 
-        GameWindow gameWindow = new GameWindow();
+        Robots robot = new Robots();
+
+        GameWindow gameWindow = new GameWindow(robot);
         gameWindow.setSize(400, 400);
         addWindow(gameWindow);
         BarMenu barMenu = new BarMenu(this);
@@ -45,5 +47,13 @@ public class MainApplicationFrame extends JFrame {
     protected void addWindow(JInternalFrame frame) {
         desktopPane.add(frame);
         frame.setVisible(true);
+    }
+
+    public void unregister() {
+        for(Object e : getFrames()) {
+            if (e instanceof LogWindow) {
+                ((LogWindow)e).exit();
+            }
+        }
     }
 }

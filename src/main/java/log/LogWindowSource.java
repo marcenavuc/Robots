@@ -2,10 +2,7 @@ package log;
 
 import utils.LimitedQueue;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 
 /**
  * Что починить:
@@ -18,26 +15,26 @@ import java.util.LinkedList;
  */
 public class LogWindowSource {
     private final LimitedQueue<LogEntry> m_messages;
-    private final ArrayList<LogChangeListener> m_listeners;
+    private final LimitedQueue<LogChangeListener> m_listeners;
     private volatile LogChangeListener[] m_activeListeners;
 
     public LogWindowSource(int iQueueLength) {
         m_messages = new LimitedQueue<>(iQueueLength);
-        m_listeners = new ArrayList<>();
+        m_listeners = new LimitedQueue<>(iQueueLength);
     }
 
     public void registerListener(LogChangeListener listener) {
-        synchronized (m_listeners) {
+        //synchronized (m_listeners) {
             m_listeners.add(listener);
             m_activeListeners = null;
-        }
+        //}
     }
 
     public void unregisterListener(LogChangeListener listener) {
-        synchronized (m_listeners) {
+        //synchronized (m_listeners) {
             m_listeners.remove(listener);
             m_activeListeners = null;
-        }
+        //}
     }
 
     public void append(LogLevel logLevel, String strMessage) {
@@ -45,12 +42,12 @@ public class LogWindowSource {
         m_messages.add(entry);
         LogChangeListener[] activeListeners = m_activeListeners;
         if (activeListeners == null)
-            synchronized (m_listeners) {
+            //synchronized (m_listeners) {
                 if (m_activeListeners == null) {
                     activeListeners = m_listeners.toArray(new LogChangeListener[0]);
                     m_activeListeners = activeListeners;
                 }
-            }
+            //}
         assert activeListeners != null;
         for (LogChangeListener listener : activeListeners)
             listener.onLogChanged();

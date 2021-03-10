@@ -47,6 +47,7 @@ public class BarMenu {
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(createLookAndFeelMenu());
         menuBar.add(createTestMenu());
+        menuBar.add(createExitMenu());
         return menuBar;
     }
 
@@ -73,6 +74,15 @@ public class BarMenu {
                         -> Logger.debug("Новая строка")));
     }
 
+    private JMenu createExitMenu(){
+        return createMenu("Выход",
+                KeyEvent.VK_B,
+                "Выход их приложения",
+                createItem("Выйти из приложения",
+                        KeyEvent.VK_Q,
+                        (event) -> System.exit(0)));
+    }
+
     private void setLookAndFeel(String className) {
         try {
             UIManager.setLookAndFeel(className);
@@ -94,7 +104,8 @@ public class BarMenu {
         menu.setMnemonic(key);
         menu.getAccessibleContext()
                 .setAccessibleDescription(textDescription);
-        menu.add(item);
+        if (item != null)
+            menu.add(item);
         return menu;
     }
 

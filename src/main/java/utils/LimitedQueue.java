@@ -1,8 +1,10 @@
 package utils;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class LimitedQueue<E> extends LinkedList<E> {
+public class LimitedQueue<E> extends ConcurrentLinkedQueue<E> {
 
         private final int limit;
 
@@ -17,5 +19,19 @@ public class LimitedQueue<E> extends LinkedList<E> {
                 super.remove();
             }
             return added;
+        }
+
+        public Iterable<E> subList(int startFrom, int count){
+            ArrayList<E> temp = new ArrayList<>();
+            int i = 0;
+            Iterator<E> t = super.iterator();
+            while (t.hasNext() && i++ < this.size() && count > 0){
+                E value = t.next();
+                if (i >= startFrom){
+                    temp.add(value);
+                    count--;
+                }
+            }
+            return temp;
         }
 }

@@ -1,4 +1,4 @@
-package gui;
+import gui.MainApplicationFrame;
 
 import java.awt.Frame;
 

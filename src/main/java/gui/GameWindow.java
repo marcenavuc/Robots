@@ -2,10 +2,9 @@ package gui;
 
 import utils.Robots;
 
-import java.awt.BorderLayout;
+import java.awt.*;
 
-import javax.swing.JInternalFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 public class GameWindow extends JInternalFrame
 {

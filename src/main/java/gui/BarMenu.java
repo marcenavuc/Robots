@@ -3,6 +3,7 @@ package gui;
 import log.Logger;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
@@ -45,10 +46,31 @@ public class BarMenu {
 
     public JMenuBar generateMenuBar() {
         JMenuBar menuBar = new JMenuBar();
+        menuBar.add(createMainMenu());
         menuBar.add(createLookAndFeelMenu());
         menuBar.add(createTestMenu());
-        menuBar.add(createExitMenu());
         return menuBar;
+    }
+
+//    private JMenu createMainMenu() {
+//        JMenu file = new JMenu("Меню");
+//        JMenuItem exit = new JMenuItem(new ExitAction(mainFrame));
+//        file.add(exit);
+//        return file;
+//    }
+
+    private JMenu createMainMenu(){
+        return createMenu("Меню",
+                KeyEvent.VK_Q,
+                "Главное меню",
+                createItem("Выход", 0, (event) -> {
+                    if (MainApplicationFrame.getN(
+                            mainFrame,
+                            new Object[] {"Да", "Нет"}) == 0) {
+                        mainFrame.unregister();
+                        System.exit(0);
+                    }
+                }));
     }
 
     private JMenu createLookAndFeelMenu() {
@@ -72,15 +94,6 @@ public class BarMenu {
                 "Тестовые команды",
                 createItem("Сообщение в лог", KeyEvent.VK_S, (event)
                         -> Logger.debug("Новая строка")));
-    }
-
-    private JMenu createExitMenu(){
-        return createMenu("Выход",
-                KeyEvent.VK_B,
-                "Выход их приложения",
-                createItem("Выйти из приложения",
-                        KeyEvent.VK_Q,
-                        (event) -> System.exit(0)));
     }
 
     private void setLookAndFeel(String className) {

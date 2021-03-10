@@ -1,7 +1,5 @@
 package utils;
 
-import jdk.nashorn.internal.objects.annotations.Getter;
-
 import java.awt.Point;
 
 public class Robots {

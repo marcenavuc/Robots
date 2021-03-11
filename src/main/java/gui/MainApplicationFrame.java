@@ -64,8 +64,8 @@ public class MainApplicationFrame extends JFrame {
             @Override
             public void internalFrameClosing(InternalFrameEvent event) {
                 super.internalFrameClosing(event);
-                logWindow.exit();
-                addOptionPane(event);
+                if (addOptionPane(event) == 0)
+                    logWindow.exit();
             }
         });
         logWindow.pack();
@@ -73,11 +73,14 @@ public class MainApplicationFrame extends JFrame {
         return logWindow;
     }
 
-    private void addOptionPane(InternalFrameEvent event) {
+    private int addOptionPane(InternalFrameEvent event) {
         if (getN(event.getInternalFrame(),
-                new Object[] {"Да", "Нет"}) == 0)
+                new Object[] {"Да", "Нет"}) == 0) {
             event.getInternalFrame().setVisible(false);
+            return 0;
+        }
         event.getInternalFrame().setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        return 1;
     }
 
     protected void addWindow(JInternalFrame frame) {

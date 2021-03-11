@@ -1,7 +1,7 @@
 package gui;
 
 import log.Logger;
-import utils.Robots;
+import utils.Robot;
 
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
@@ -9,7 +9,6 @@ import javax.swing.event.InternalFrameEvent;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 
 public class MainApplicationFrame extends JFrame {
     private final JDesktopPane desktopPane = new JDesktopPane();
@@ -28,7 +27,7 @@ public class MainApplicationFrame extends JFrame {
         LogWindow logWindow = createLogWindow();
         addWindow(logWindow);
 
-        GameWindow gameWindow = createGameWindow(new Robots());
+        GameWindow gameWindow = createGameWindow();
         addWindow(gameWindow);
 
         BarMenu barMenu = new BarMenu(this);
@@ -36,8 +35,8 @@ public class MainApplicationFrame extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
-    protected GameWindow createGameWindow(Robots robot) {
-        robot.setSize(400, 400);
+    protected GameWindow createGameWindow() {
+        Robot robot = new Robot(400, 400);
         GameWindow gameWindow = new GameWindow(robot);
         gameWindow.setSize(400, 400);
         gameWindow.addInternalFrameListener(new InternalFrameAdapter() {

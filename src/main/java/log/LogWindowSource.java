@@ -1,6 +1,6 @@
 package log;
 
-import utils.LimitedQueue;
+import utils.LimitedConcurrentLinkedQueue;
 
 import java.util.Collections;
 
@@ -14,13 +14,13 @@ import java.util.Collections;
  * ограниченного размера)
  */
 public class LogWindowSource {
-    private final LimitedQueue<LogEntry> m_messages;
-    private final LimitedQueue<LogChangeListener> m_listeners;
+    private final LimitedConcurrentLinkedQueue<LogEntry> m_messages;
+    private final LimitedConcurrentLinkedQueue<LogChangeListener> m_listeners;
     private volatile LogChangeListener[] m_activeListeners;
 
     public LogWindowSource(int iQueueLength) {
-        m_messages = new LimitedQueue<>(iQueueLength);
-        m_listeners = new LimitedQueue<>(iQueueLength);
+        m_messages = new LimitedConcurrentLinkedQueue<>(iQueueLength);
+        m_listeners = new LimitedConcurrentLinkedQueue<>(iQueueLength);
     }
 
     public void registerListener(LogChangeListener listener) {

@@ -1,6 +1,6 @@
 package gui;
 
-import utils.Robots;
+import utils.Robot;
 
 import java.awt.*;
 
@@ -9,7 +9,7 @@ import javax.swing.*;
 public class GameWindow extends JInternalFrame
 {
     private final GameVisualizer m_visualizer;
-    public GameWindow(Robots robot)
+    public GameWindow(Robot robot)
     {
         super("Игровое поле", true, true, true, true);
         m_visualizer = new GameVisualizer(robot);

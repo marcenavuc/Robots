@@ -1,15 +1,14 @@
 package utils;
 
 import java.awt.Point;
-import java.util.ArrayList;
 
-public class Robots {
+public class Robot {
     private volatile double robotPositionX = 100;
     private volatile double robotPositionY = 100;
     private volatile double robotDirection = 0;
 
-    private volatile double width = 100;
-    private volatile double height = 100;
+    private volatile double widthField;
+    private volatile double heightField;
 
     private volatile int targetPositionX = 150;
     private volatile int targetPositionY = 100;
@@ -17,6 +16,9 @@ public class Robots {
     private static final double MAX_VELOCITY = 0.1;
     private static final double MAX_ANGULAR_VELOCITY = 0.001;
 
+    public Robot(int width, int height){
+        setSize(width, height);
+    }
 
     public void setTargetPosition(Point point) {
         targetPositionX = point.x;
@@ -74,11 +76,11 @@ public class Robots {
 
         double newX = getNewCoordinates(velocity, angularVelocity, duration, true);
         double newY = getNewCoordinates(velocity, angularVelocity, duration, false);
-        if (newX> width || newX < 5 || newY > height || newY < 5) {
-            System.out.println(width);
+        if (newX> widthField || newX < 0 || newY > heightField || newY < 0) {
+            System.out.println(widthField);
             System.out.println(newX);
             double wallAngle = 0;
-            if (newX > width || newX < 5)
+            if (newX > widthField || newX < 0)
                 wallAngle = Math.PI / 2;
 
             robotDirection = wallAngle * 2 - robotDirection;
@@ -147,8 +149,8 @@ public class Robots {
         return (int)(value + 0.5);
     }
 
-    public void setSize(double width, double height) {
-        this.width = width;
-        this.height = height;
+    public void setSize(int width, int height) {
+        this.widthField = width;
+        this.heightField = height;
     }
 }

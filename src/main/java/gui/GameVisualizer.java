@@ -1,6 +1,6 @@
 package gui;
 
-import utils.Robots;
+import utils.Robot;
 
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -16,14 +16,14 @@ import javax.swing.JPanel;
 
 public class GameVisualizer extends JPanel {
     private final Timer timer = initTimer();
-    private final Robots robot;
+    private final Robot robot;
 
     private static Timer initTimer() {
         Timer timer = new Timer("events generator", true);
         return timer;
     }
 
-    public GameVisualizer(Robots robot) {
+    public GameVisualizer(Robot robot) {
         this.robot = robot;
         timer.schedule(new TimerTask() {
             @Override

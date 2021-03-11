@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class LimitedQueue<E> extends ConcurrentLinkedQueue<E> {
+public class LimitedConcurrentLinkedQueue<E> extends ConcurrentLinkedQueue<E> {
 
         private final int limit;
 
-        public LimitedQueue(int limit) {
+        public LimitedConcurrentLinkedQueue(int limit) {
             this.limit = limit;
         }
 

@@ -3,6 +3,7 @@ package gui;
 import utils.Robot;
 
 import java.awt.*;
+import java.io.Serializable;
 
 import javax.swing.*;
 
@@ -18,4 +19,6 @@ public class GameWindow extends JInternalFrame
         getContentPane().add(panel);
         pack();
     }
+
+
 }

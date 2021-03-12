@@ -6,8 +6,6 @@ import java.awt.TextArea;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
 
 import log.LogChangeListener;
 import log.LogEntry;

@@ -3,11 +3,14 @@ package gui;
 import utils.Robot;
 
 import java.awt.*;
-import java.io.Serializable;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 
 import javax.swing.*;
 
-public class GameWindow extends JInternalFrame
+public class GameWindow extends JInternalFrame implements Externalizable
 {
     private final GameVisualizer m_visualizer;
     public GameWindow(Robot robot)
@@ -21,4 +24,13 @@ public class GameWindow extends JInternalFrame
     }
 
 
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+
+    }
 }

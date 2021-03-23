@@ -1,8 +1,10 @@
 package gui;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-import java.awt.TextArea;
+import java.awt.*;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
@@ -10,10 +12,11 @@ import javax.swing.JPanel;
 import log.LogChangeListener;
 import log.LogEntry;
 import log.LogWindowSource;
+import sun.rmi.runtime.Log;
 
-public class LogWindow extends JInternalFrame implements LogChangeListener
+public class LogWindow extends JInternalFrame implements LogChangeListener, Externalizable
 {
-    private final LogWindowSource m_logSource;
+    private LogWindowSource m_logSource;
     private final TextArea m_logContent;
 
     public LogWindow(LogWindowSource logSource) 
@@ -50,5 +53,21 @@ public class LogWindow extends JInternalFrame implements LogChangeListener
 
     public void exit() {
         m_logSource.unregisterListener(this);
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+//        out.writeObject(m_logSource);   // saving LogWindow not working
+        out.writeObject(m_logContent.getText()); // saving Text
+        out.writeObject(m_logContent.getSize());  // saving Size
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        m_logSource = (LogWindowSource) in.readObject();
+        String text = (String) in.readObject();
+        Dimension dim = (Dimension) in.readObject();
+        m_logContent.setText(text);
+        m_logContent.setSize(dim);
     }
 }

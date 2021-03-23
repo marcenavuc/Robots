@@ -74,7 +74,6 @@ public class Robot {
     private void moveRobot(double velocity, double angularVelocity, double duration) {
         velocity = applyLimits(velocity, 0, MAX_VELOCITY);
         angularVelocity = applyLimits(angularVelocity, -MAX_ANGULAR_VELOCITY, MAX_ANGULAR_VELOCITY);
-
         double newX = getNewCoordinates(velocity, angularVelocity, duration, true);
         double newY = getNewCoordinates(velocity, angularVelocity, duration, false);
         if (newX> width || newX < 0 || newY > height - 5 || newY < 0) {

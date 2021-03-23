@@ -9,11 +9,26 @@ import javax.swing.event.InternalFrameEvent;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.io.*;
 
-public class MainApplicationFrame extends JFrame {
-    private final JDesktopPane desktopPane = new JDesktopPane();
+public class MainApplicationFrame extends JFrame implements Serializable {
+    private transient JDesktopPane desktopPane = new JDesktopPane();
+    public GameWindow gameWindow = null;
+    public LogWindow logWindow = null;
+    public BarMenu barMenu = null;
 
     public MainApplicationFrame() {
+        try {
+            deserialize();
+        } catch (IOException e) {
+            // we don't found file
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            // i don't know what we should do
+            // maybe nothing or send to him that we're stupid
+            e.printStackTrace();
+        }
+
         int inset = 50;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setBounds(inset, inset,
@@ -22,10 +37,10 @@ public class MainApplicationFrame extends JFrame {
 
         setContentPane(desktopPane);
 
-        LogWindow logWindow = createLogWindow();
+        logWindow = createLogWindow();
         addWindow(logWindow);
 
-        GameWindow gameWindow = createGameWindow();
+        gameWindow = createGameWindow();
         addWindow(gameWindow);
 
         BarMenu barMenu = new BarMenu(this);
@@ -41,6 +56,12 @@ public class MainApplicationFrame extends JFrame {
             public void internalFrameClosing(InternalFrameEvent event){
                 super.internalFrameClosing(event);
                 addOptionPane(event);
+                try {
+                    serialize();
+                } catch (IOException e) {
+                    // do nothing, or send to user message that we can't save his session
+                    e.printStackTrace();
+                }
             }
         });
         gameWindow.addComponentListener(new ComponentAdapter() {
@@ -106,5 +127,19 @@ public class MainApplicationFrame extends JFrame {
                         "Подтверждение", JOptionPane.YES_NO_OPTION,
                         JOptionPane.QUESTION_MESSAGE, null, buttons,
                         buttons[1]);
+    }
+
+    void serialize() throws IOException {
+        System.out.println("Started serialization");
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(
+                new FileOutputStream("save.out"));
+        objectOutputStream.writeObject(logWindow);
+        objectOutputStream.close();
+    }
+
+    void deserialize() throws IOException, ClassNotFoundException {
+        ObjectInputStream objectInputStream = new ObjectInputStream(
+                new FileInputStream("save.out"));
+        objectInputStream.close();
     }
 }

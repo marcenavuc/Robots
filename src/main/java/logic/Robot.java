@@ -1,15 +1,14 @@
-package utils;
+package logic;
 
 import java.awt.Point;
-import java.util.ArrayList;
 
 public class Robot {
     private volatile double robotPositionX = 100;
     private volatile double robotPositionY = 100;
     private volatile double robotDirection = 0;
 
-    private volatile double width;
-    private volatile double height;
+    private volatile double widthField;
+    private volatile double heightField;
 
     private volatile int targetPositionX = 150;
     private volatile int targetPositionY = 100;
@@ -77,9 +76,11 @@ public class Robot {
 
         double newX = getNewCoordinates(velocity, angularVelocity, duration, true);
         double newY = getNewCoordinates(velocity, angularVelocity, duration, false);
-        if (newX> width || newX < 0 || newY > height - 5 || newY < 0) {
+        if (newX> widthField || newX < 0 || newY > heightField || newY < 0) {
+            System.out.println(widthField);
+            System.out.println(newX);
             double wallAngle = 0;
-            if (newX > width || newX < 0)
+            if (newX > widthField || newX < 0)
                 wallAngle = Math.PI / 2;
 
             robotDirection = wallAngle * 2 - robotDirection;
@@ -149,15 +150,7 @@ public class Robot {
     }
 
     public void setSize(int width, int height) {
-        this.width = width;
-        this.height = height;
-    }
-
-    public double getWidth() {
-        return width;
-    }
-
-    public double getHeight() {
-        return height;
+        this.widthField = width;
+        this.heightField = height;
     }
 }

@@ -1,9 +1,8 @@
 package gui;
 
-import utils.Robot;
+import logic.Robot;
 
 import java.awt.*;
-import java.io.Serializable;
 
 import javax.swing.*;
 

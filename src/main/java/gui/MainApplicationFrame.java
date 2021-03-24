@@ -1,8 +1,8 @@
 package gui;
 
 import log.Logger;
-import utils.Robot;
 
+import logic.Robot;
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
@@ -14,6 +14,8 @@ public class MainApplicationFrame extends JFrame {
     private final JDesktopPane desktopPane = new JDesktopPane();
 
     public MainApplicationFrame() {
+        //Make the big window be indented 50 pixels from each edge
+        //of the screen.
         int inset = 50;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setBounds(inset, inset,
@@ -30,6 +32,7 @@ public class MainApplicationFrame extends JFrame {
 
         BarMenu barMenu = new BarMenu(this);
         setJMenuBar(barMenu.generateMenuBar());
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
     protected GameWindow createGameWindow() {
@@ -47,15 +50,6 @@ public class MainApplicationFrame extends JFrame {
             @Override
             public void componentResized(ComponentEvent e) {
                 robot.setSize(gameWindow.getWidth(), gameWindow.getHeight());
-                double robotPositionX = robot.getRobotPositionX();
-                double robotPositionY = robot.getRobotPositionY();
-                if (robotPositionX > gameWindow.getWidth()) {
-                    robotPositionX = gameWindow.getWidth();
-                }
-                if (robotPositionY > gameWindow.getHeight()) {
-                    robotPositionY = gameWindow.getHeight();
-                }
-                robot.setRobotPosition(robotPositionX, robotPositionY);
             }
         });
         return gameWindow;

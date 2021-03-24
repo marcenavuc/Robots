@@ -45,6 +45,7 @@ public class MainApplicationFrame extends JFrame implements Serializable {
             // maybe nothing or send to him that we're stupid
             e.printStackTrace();
         }
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
     protected GameWindow createGameWindow(Robot robot, int width, int height) {
@@ -67,15 +68,6 @@ public class MainApplicationFrame extends JFrame implements Serializable {
             @Override
             public void componentResized(ComponentEvent e) {
                 robot.setSize(gameWindow.getWidth(), gameWindow.getHeight());
-                double robotPositionX = robot.getRobotPositionX();
-                double robotPositionY = robot.getRobotPositionY();
-                if (robotPositionX > gameWindow.getWidth()) {
-                    robotPositionX = gameWindow.getWidth();
-                }
-                if (robotPositionY > gameWindow.getHeight()) {
-                    robotPositionY = gameWindow.getHeight();
-                }
-                robot.setRobotPosition(robotPositionX, robotPositionY);
             }
         });
         return gameWindow;

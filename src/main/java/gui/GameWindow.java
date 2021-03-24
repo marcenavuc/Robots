@@ -1,18 +1,12 @@
 package gui;
-
 import utils.Robot;
-
 import java.awt.*;
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-
+import java.io.*;
 import javax.swing.*;
 
 public class GameWindow extends JInternalFrame implements Externalizable
 {
-    private final GameVisualizer m_visualizer;
+    private GameVisualizer m_visualizer;
     public GameWindow(Robot robot)
     {
         super("Игровое поле", true, true, true, true);
@@ -23,14 +17,17 @@ public class GameWindow extends JInternalFrame implements Externalizable
         pack();
     }
 
+    public GameWindow() {
+        new GameWindow(null);
+    }
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-
+        out.writeObject(m_visualizer);
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-
+        m_visualizer = (GameVisualizer) in.readObject();
     }
 }

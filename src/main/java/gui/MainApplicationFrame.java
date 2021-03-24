@@ -15,20 +15,9 @@ public class MainApplicationFrame extends JFrame implements Serializable {
     private transient JDesktopPane desktopPane = new JDesktopPane();
     public GameWindow gameWindow = null;
     public LogWindow logWindow = null;
-    public BarMenu barMenu = null;
+    public Robot robot = null;
 
     public MainApplicationFrame() {
-        try {
-            deserialize();
-        } catch (IOException e) {
-            // we don't found file
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            // i don't know what we should do
-            // maybe nothing or send to him that we're stupid
-            e.printStackTrace();
-        }
-
         int inset = 50;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setBounds(inset, inset,
@@ -45,12 +34,22 @@ public class MainApplicationFrame extends JFrame implements Serializable {
 
         BarMenu barMenu = new BarMenu(this);
         setJMenuBar(barMenu.generateMenuBar());
+
+        try {
+            deserialize();
+        } catch (IOException e) {
+            // we don't found file
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            // i don't know what we should do
+            // maybe nothing or send to him that we're stupid
+            e.printStackTrace();
+        }
     }
 
-    protected GameWindow createGameWindow() {
-        Robot robot = new Robot(400, 400);
+    protected GameWindow createGameWindow(Robot robot, int width, int height) {
         GameWindow gameWindow = new GameWindow(robot);
-        gameWindow.setSize(400, 400);
+        gameWindow.setSize(width, height);
         gameWindow.addInternalFrameListener(new InternalFrameAdapter() {
             @Override
             public void internalFrameClosing(InternalFrameEvent event){
@@ -80,6 +79,10 @@ public class MainApplicationFrame extends JFrame implements Serializable {
             }
         });
         return gameWindow;
+    }
+
+    protected GameWindow createGameWindow() {
+        return createGameWindow(new Robot(400, 400), 400, 400);
     }
 
     protected LogWindow createLogWindow() {
@@ -130,16 +133,25 @@ public class MainApplicationFrame extends JFrame implements Serializable {
     }
 
     void serialize() throws IOException {
-        System.out.println("Started serialization");
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(
                 new FileOutputStream("save.out"));
-        objectOutputStream.writeObject(logWindow);
+        objectOutputStream.writeObject(robot);
+        objectOutputStream.writeObject(gameWindow.getSize());
+        objectOutputStream.writeObject(gameWindow.getLocation());
         objectOutputStream.close();
     }
 
     void deserialize() throws IOException, ClassNotFoundException {
         ObjectInputStream objectInputStream = new ObjectInputStream(
                 new FileInputStream("save.out"));
+        robot = (Robot) objectInputStream.readObject();
+        Dimension size = (Dimension) objectInputStream.readObject();
+        Point location = (Point) objectInputStream.readObject();
+        if (gameWindow != null)
+            desktopPane.remove(gameWindow);
+        gameWindow = createGameWindow(robot, size.width, size.height);
+        gameWindow.setLocation(location.x, location.y);
+        addWindow(gameWindow);
         objectInputStream.close();
     }
 }

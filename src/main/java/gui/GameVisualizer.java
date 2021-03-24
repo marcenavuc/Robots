@@ -9,14 +9,15 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
+import java.io.*;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.JPanel;
 
-public class GameVisualizer extends JPanel {
-    private final Timer timer = initTimer();
-    private final Robot robot;
+public class GameVisualizer extends JPanel implements Externalizable {
+    private Timer timer = initTimer();
+    private Robot robot;
 
     private static Timer initTimer() {
         Timer timer = new Timer("events generator", true);
@@ -100,5 +101,16 @@ public class GameVisualizer extends JPanel {
         fillOval(g, x, y, 5, 5);
         g.setColor(Color.BLACK);
         drawOval(g, x, y, 5, 5);
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeObject(robot);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        robot = (Robot) in.readObject();
+        timer = initTimer();
     }
 }

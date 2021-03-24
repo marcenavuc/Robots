@@ -1,9 +1,9 @@
 package utils;
 
 import java.awt.Point;
-import java.util.ArrayList;
+import java.io.Serializable;
 
-public class Robot {
+public class Robot implements Serializable {
     private volatile double robotPositionX = 100;
     private volatile double robotPositionY = 100;
     private volatile double robotDirection = 0;

@@ -12,7 +12,6 @@ import javax.swing.JPanel;
 import log.LogChangeListener;
 import log.LogEntry;
 import log.LogWindowSource;
-import sun.rmi.runtime.Log;
 
 public class LogWindow extends JInternalFrame implements LogChangeListener, Externalizable
 {
@@ -64,7 +63,7 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Exte
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        m_logSource = (LogWindowSource) in.readObject();
+//        m_logSource = (LogWindowSource) in.readObject(); not working
         String text = (String) in.readObject();
         Dimension dim = (Dimension) in.readObject();
         m_logContent.setText(text);

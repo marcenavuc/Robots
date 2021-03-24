@@ -24,10 +24,19 @@ public class GameWindow extends JInternalFrame implements Externalizable
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeObject(m_visualizer);
+        out.writeObject(getSize());
+        out.writeObject(getLocation());
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         m_visualizer = (GameVisualizer) in.readObject();
+        Dimension size = (Dimension) in.readObject();
+        Point location = (Point) in.readObject();
+        setSize(size);
+        setLocation(location);
+//        gameWindow = createGameWindow(robot, size.width, size.height);
+//        gameWindow.setLocation(location.x, location.y);
+//        addWindow(gameWindow);
     }
 }

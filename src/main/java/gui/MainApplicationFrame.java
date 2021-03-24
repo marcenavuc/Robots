@@ -128,27 +128,33 @@ public class MainApplicationFrame extends JFrame implements Serializable {
     void serialize() throws IOException {
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(
                 new FileOutputStream("save.out"));
-        System.out.println("Started serialization");
-        System.out.println(robot);
         objectOutputStream.writeObject(robot);
-        objectOutputStream.writeObject(gameWindow.getSize());
-        objectOutputStream.writeObject(gameWindow.getLocation());
+//        objectOutputStream.writeObject(gameWindow.getSize());
+//        objectOutputStream.writeObject(gameWindow.getLocation());
+        objectOutputStream.writeObject(gameWindow);
         objectOutputStream.close();
     }
 
     void deserialize() throws IOException, ClassNotFoundException {
         ObjectInputStream objectInputStream = new ObjectInputStream(
                 new FileInputStream("save.out"));
+        // Robot
         robot = (Robot) objectInputStream.readObject();
-        Dimension size = (Dimension) objectInputStream.readObject();
-        Point location = (Point) objectInputStream.readObject();
+
+        // gameWindow
+//        Dimension size = (Dimension) objectInputStream.readObject();
+//        Point location = (Point) objectInputStream.readObject();
+//        if (gameWindow != null)
+//            desktopPane.remove(gameWindow);
+//        gameWindow = createGameWindow(robot, size.width, size.height);
+//        gameWindow.setLocation(location.x, location.y);
+//        addWindow(gameWindow);
+        gameWindow = (GameWindow) objectInputStream.readObject();
         if (gameWindow != null)
             desktopPane.remove(gameWindow);
-        gameWindow = createGameWindow(robot, size.width, size.height);
-        gameWindow.setLocation(location.x, location.y);
+        gameWindow = createGameWindow(robot, gameWindow.getWidth(), gameWindow.getHeight());
         addWindow(gameWindow);
+
         objectInputStream.close();
-        System.out.println("Deserialization complited");
-        System.out.println(robot);
     }
 }

@@ -1,7 +1,7 @@
 package gui;
 
 import log.Logger;
-import utils.Robot;
+import logic.Robot;
 
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
@@ -74,7 +74,8 @@ public class MainApplicationFrame extends JFrame implements Serializable {
     }
 
     protected GameWindow createGameWindow() {
-        return createGameWindow(new Robot(400, 400), 400, 400);
+        robot = new Robot(400, 400);
+        return createGameWindow(robot, 400, 400);
     }
 
     protected LogWindow createLogWindow() {
@@ -127,6 +128,8 @@ public class MainApplicationFrame extends JFrame implements Serializable {
     void serialize() throws IOException {
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(
                 new FileOutputStream("save.out"));
+        System.out.println("Started serialization");
+        System.out.println(robot);
         objectOutputStream.writeObject(robot);
         objectOutputStream.writeObject(gameWindow.getSize());
         objectOutputStream.writeObject(gameWindow.getLocation());
@@ -145,5 +148,7 @@ public class MainApplicationFrame extends JFrame implements Serializable {
         gameWindow.setLocation(location.x, location.y);
         addWindow(gameWindow);
         objectInputStream.close();
+        System.out.println("Deserialization complited");
+        System.out.println(robot);
     }
 }

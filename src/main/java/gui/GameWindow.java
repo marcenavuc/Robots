@@ -1,5 +1,5 @@
 package gui;
-import utils.Robot;
+import logic.Robot;
 import java.awt.*;
 import java.io.*;
 import javax.swing.*;

@@ -15,10 +15,11 @@ import static gui.serialization.Serializer.*;
 
 public class MainFrame extends JFrame {
     private static final long serialVersionUID = 2L;
-    public GameFrame gameFrame;
-    public LogFrame logFrame;
     private final boolean notLoad;
     private final transient JDesktopPane desktopPane = new JDesktopPane();
+    public GameFrame gameFrame;
+    public LogFrame logFrame;
+    public Robot robot;
 
     public MainFrame(boolean notLoad) throws PropertyVetoException {
         this.notLoad = notLoad;
@@ -36,7 +37,12 @@ public class MainFrame extends JFrame {
         logFrame = createLogWindow();
         addWindow(logFrame);
 
-        gameFrame = createGameWindow(new Robot(400, 400));
+        Robot loadedRobot = loadRobot(Const.robotFile);
+        if (loadedRobot == null)
+            robot = new Robot(400, 400);
+        else
+            robot = loadedRobot;
+        gameFrame = createGameWindow(robot);
         addWindow(gameFrame);
 
         BarMenu barMenu = new BarMenu(this);
@@ -51,6 +57,7 @@ public class MainFrame extends JFrame {
                     saveWindowState(gameFrame, Const.gameFile);
                     saveWindowState(logFrame, Const.logFile);
                     saveWindowState(temp, Const.mainFile);
+                    saveRobot(robot, Const.robotFile);
                     System.exit(0);
                 }
             }

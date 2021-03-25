@@ -2,6 +2,7 @@ package gui.serialization;
 
 import gui.MainFrame;
 import gui.windows.LogFrame;
+import logic.Robot;
 
 import java.awt.*;
 import java.beans.PropertyVetoException;
@@ -78,5 +79,20 @@ public class Serializer {
             }
         }
         return info != null ? frame : null;
+    }
+
+    public static void saveRobot(Robot robot, String name) {
+        serialize(robot, name);
+    }
+
+    public static Robot loadRobot(String name) {
+        Robot robot = null;
+        try (InputStream is = new FileInputStream(name);
+             ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(is))) {
+            robot = (Robot) ois.readObject();
+        } catch (ClassNotFoundException | IOException ex) {
+            ex.printStackTrace();
+        }
+        return robot;
     }
 }

@@ -38,10 +38,7 @@ public class MainFrame extends JFrame {
         addWindow(logFrame);
 
         Robot loadedRobot = loadRobot(Const.robotFile);
-        if (loadedRobot == null)
-            robot = new Robot(400, 400);
-        else
-            robot = loadedRobot;
+        robot = loadedRobot == null ? new Robot(400, 400) : loadedRobot;
         gameFrame = createGameWindow(robot);
         addWindow(gameFrame);
 

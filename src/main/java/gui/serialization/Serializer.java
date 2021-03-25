@@ -90,9 +90,7 @@ public class Serializer {
         try (InputStream is = new FileInputStream(name);
              ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(is))) {
             robot = (Robot) ois.readObject();
-        } catch (ClassNotFoundException | IOException ex) {
-            ex.printStackTrace();
-        }
+        } catch (ClassNotFoundException | IOException ignored) { }
         return robot;
     }
 }

@@ -7,7 +7,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class GameFrame extends JInternalFrame {
-    private static final long serialVersionUID = 4L;
     private final transient GameVisualizer m_visualizer;
 
     public GameFrame(Robot robot) {

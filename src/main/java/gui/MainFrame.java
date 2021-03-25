@@ -14,7 +14,6 @@ import java.beans.PropertyVetoException;
 import static gui.serialization.Serializer.*;
 
 public class MainFrame extends JFrame {
-    private static final long serialVersionUID = 2L;
     private final boolean notLoad;
     private final transient JDesktopPane desktopPane = new JDesktopPane();
     public GameFrame gameFrame;

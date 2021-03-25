@@ -4,6 +4,7 @@ import java.awt.*;
 import java.io.Serializable;
 
 public class Robot implements Serializable {
+    private static final long serialVersionUID = 2L;
     private static final double MAX_VELOCITY = 0.1;
     private static final double MAX_ANGULAR_VELOCITY = 0.001;
     private volatile double robotPositionX = 100;

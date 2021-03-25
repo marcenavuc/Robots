@@ -8,7 +8,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class LogFrame extends JInternalFrame implements LogChangeListener {
-    private static final long serialVersionUID = 3L;
     public final transient TextArea m_logContent;
     private final transient LogWindowSource m_logSource;
 

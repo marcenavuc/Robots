@@ -3,6 +3,7 @@ package gui.serialization;
 import gui.MainFrame;
 import gui.windows.LogFrame;
 
+import java.awt.*;
 import java.beans.PropertyVetoException;
 import java.io.*;
 
@@ -73,7 +74,7 @@ public class Serializer {
         if (info != null) {
             if (frame instanceof MainFrame){
                 frame.setLocation(info.xPosition, info.yPosition);
-                frame.setSize(info.width, info.height);
+                frame.setPreferredSize(new Dimension(info.width, info.height));
             }
         }
         return info != null ? frame : null;

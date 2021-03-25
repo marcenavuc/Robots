@@ -11,7 +11,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyVetoException;
 
-import static gui.serialization.WindowSerializer.*;
+import static gui.serialization.Serializer.*;
 
 public class MainFrame extends JFrame {
     private static final long serialVersionUID = 2L;
@@ -29,7 +29,6 @@ public class MainFrame extends JFrame {
                 screenSize.height - inset * 2);
 
         setContentPane(desktopPane);
-        setExtendedState(Frame.MAXIMIZED_BOTH);
 
         if (notLoad || loadWindowState(Const.mainFile, this) == null)
             setExtendedState(Frame.MAXIMIZED_BOTH);
@@ -56,6 +55,8 @@ public class MainFrame extends JFrame {
                 }
             }
         });
+        pack();
+        setVisible(true);
     }
 
     protected static int getN(Component frame, Object[] buttons) {
@@ -104,8 +105,7 @@ public class MainFrame extends JFrame {
         LogFrame logFrame = new LogFrame(Logger.getDefaultLogSource());
         if (notLoad || loadWindowState(Const.logFile, logFrame) == null) {
             logFrame.setLocation(10, 10);
-            logFrame.setSize(300, 800);
-            setMinimumSize(logFrame.getSize());
+            logFrame.m_logContent.setSize(300, 800);
         }
 
         logFrame.addInternalFrameListener(new InternalFrameAdapter() {

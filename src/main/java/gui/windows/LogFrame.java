@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class LogFrame extends JInternalFrame implements LogChangeListener {
     private static final long serialVersionUID = 3L;
-    private final transient TextArea m_logContent;
+    public final transient TextArea m_logContent;
     private final transient LogWindowSource m_logSource;
 
     public LogFrame(LogWindowSource logSource) {

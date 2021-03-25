@@ -9,7 +9,7 @@ public class AckFrame extends JFrame{
         setSize(100, 50);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(screenSize.width / 2 - 100, screenSize.height / 2 - 50);
-        setVisible(true);
+        //setVisible(true);
     }
 
     public int ack() {

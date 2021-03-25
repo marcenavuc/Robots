@@ -20,7 +20,6 @@ public class RobotsProgram {
             e.printStackTrace();
         }
         SwingUtilities.invokeLater(() -> {
-            MainFrame frame = null;
             boolean notLoad = true;
 
             if (checkExistFile("")) {
@@ -29,14 +28,11 @@ public class RobotsProgram {
                 ackFrame.dispose();
             }
             try {
-                frame = new MainFrame(notLoad);
+                new MainFrame(notLoad);
             }
             catch (PropertyVetoException e) {
                 e.printStackTrace();
             }
-
-            frame.pack();
-            frame.setVisible(true);
         });
     }
 

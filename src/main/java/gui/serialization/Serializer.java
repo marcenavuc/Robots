@@ -1,15 +1,16 @@
 package gui.serialization;
 
-import gui.serialization.WindowInfo;
+import gui.MainFrame;
+import gui.windows.LogFrame;
 
 import java.beans.PropertyVetoException;
 import java.io.*;
 
 import javax.swing.*;
 
-public class WindowSerializer {
+public class Serializer {
     public static void saveWindowState(JInternalFrame frame, String name) {
-        WindowInfo info = new WindowInfo();
+        Info info = new Info();
         info.height = frame.getHeight();
         info.width = frame.getWidth();
         info.xPosition = frame.getX();
@@ -20,7 +21,7 @@ public class WindowSerializer {
     }
 
     public static void saveWindowState(JFrame frame, String name) {
-        WindowInfo info = new WindowInfo();
+        Info info = new Info();
         info.height = frame.getHeight();
         info.width = frame.getWidth();
         info.xPosition = frame.getX();
@@ -39,11 +40,11 @@ public class WindowSerializer {
         }
     }
 
-    private static WindowInfo deserialize(String name) {
-        WindowInfo restored = null;
+    private static Info deserialize(String name) {
+        Info restored = null;
         try (InputStream is = new FileInputStream(name);
              ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(is))) {
-            restored = (WindowInfo) ois.readObject();
+            restored = (Info) ois.readObject();
         } catch (ClassNotFoundException | IOException ex) {
             ex.printStackTrace();
         }
@@ -51,8 +52,14 @@ public class WindowSerializer {
     }
 
     public static JInternalFrame loadWindowState(String name, JInternalFrame frame) throws PropertyVetoException {
-        WindowInfo info = (WindowInfo) deserialize(name);
+        Info info = (Info) deserialize(name);
         if (info != null) {
+            if (frame instanceof LogFrame){
+                frame.setLocation(info.xPosition, info.yPosition);
+                ((LogFrame) frame).m_logContent.setSize(info.width, info.height);
+                frame.setIcon(info.isMinimized);
+                frame.setMaximum(info.isMaximized);
+            }
             frame.setLocation(info.xPosition, info.yPosition);
             frame.setSize(info.width, info.height);
             frame.setIcon(info.isMinimized);
@@ -62,10 +69,12 @@ public class WindowSerializer {
     }
 
     public static JFrame loadWindowState(String name, JFrame frame) {
-        WindowInfo info = (WindowInfo) deserialize(name);
+        Info info = deserialize(name);
         if (info != null) {
-            frame.setLocation(info.xPosition, info.yPosition);
-            frame.setSize(info.width, info.height);
+            if (frame instanceof MainFrame){
+                frame.setLocation(info.xPosition, info.yPosition);
+                frame.setSize(info.width, info.height);
+            }
         }
         return info != null ? frame : null;
     }

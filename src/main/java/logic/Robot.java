@@ -1,9 +1,8 @@
 package logic;
 
 import java.awt.*;
-import java.io.Serializable;
 
-public class Robot implements Serializable {
+public class Robot {
     private static final double MAX_VELOCITY = 0.1;
     private static final double MAX_ANGULAR_VELOCITY = 0.001;
     private volatile double robotPositionX = 100;
@@ -76,7 +75,7 @@ public class Robot implements Serializable {
         angularVelocity = applyLimits(angularVelocity, -MAX_ANGULAR_VELOCITY, MAX_ANGULAR_VELOCITY);
         double newX = getNewCoordinates(velocity, angularVelocity, duration, true);
         double newY = getNewCoordinates(velocity, angularVelocity, duration, false);
-        if (newX > width || newX < 0 || newY > height - 5 || newY < 0) {
+        if (newX > width || newX < 0 || newY > height || newY < 0) {
             double wallAngle = 0;
             if (newX > width || newX < 0) { wallAngle = Math.PI / 2; }
 
@@ -130,6 +129,17 @@ public class Robot implements Serializable {
     public void setSize(int width, int height) {
         this.width = width;
         this.height = height;
+        if (targetPositionX > width)
+            targetPositionX = width - targetPositionX % width;
+
+        if (targetPositionY > height)
+            targetPositionY = height - targetPositionY % height;
+
+        if (robotPositionX > width)
+            robotPositionX = width - robotPositionX % width;
+
+        if (robotPositionY > height)
+            robotPositionY = height - robotPositionY % height;
     }
 
     public double getWidth() {

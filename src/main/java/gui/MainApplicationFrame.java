@@ -2,6 +2,7 @@ package gui;
 
 import log.Logger;
 
+import logic.GameObserver;
 import logic.Robot;
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
@@ -36,8 +37,8 @@ public class MainApplicationFrame extends JFrame {
     }
 
     protected GameWindow createGameWindow() {
-        Robot robot = new Robot(400, 400);
-        GameWindow gameWindow = new GameWindow(robot);
+        GameObserver gameObserver = new GameObserver();
+        GameWindow gameWindow = new GameWindow(gameObserver);
         gameWindow.setSize(400, 400);
         gameWindow.addInternalFrameListener(new InternalFrameAdapter() {
             @Override
@@ -49,7 +50,8 @@ public class MainApplicationFrame extends JFrame {
         gameWindow.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                robot.setSize(gameWindow.getWidth(), gameWindow.getHeight());
+                gameObserver.updateSize(gameWindow.getWidth(), gameWindow.getHeight());
+//                robot.setSize();
             }
         });
         return gameWindow;

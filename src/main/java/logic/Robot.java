@@ -1,7 +1,5 @@
 package logic;
 
-import java.awt.Point;
-
 public class Robot {
     private volatile double robotPositionX = 100;
     private volatile double robotPositionY = 100;
@@ -10,19 +8,22 @@ public class Robot {
     private volatile double widthField;
     private volatile double heightField;
 
-    private volatile int targetPositionX = 150;
-    private volatile int targetPositionY = 100;
+    private volatile Food food = new Food(150, 100, 1);
+    private volatile double hunger = 10;
+    private volatile double hungerLoss = 0;
 
     private static final double MAX_VELOCITY = 0.1;
     private static final double MAX_ANGULAR_VELOCITY = 0.001;
 
-    public Robot(int width, int height){
-        setSize(width, height);
+    public volatile boolean haveFood = false;
+
+    public Robot(double robotPositionX, double robotPositionY, int widthField, int heightField) {
+        setRobotPosition(robotPositionX, robotPositionY);
+        setSize(widthField, heightField);
     }
 
-    public void setTargetPosition(Point point) {
-        targetPositionX = point.x;
-        targetPositionY = point.y;
+    public Robot(int width, int height){
+        setSize(width, height);
     }
 
     public void setRobotPosition(double x, double y) {
@@ -77,8 +78,6 @@ public class Robot {
         double newX = getNewCoordinates(velocity, angularVelocity, duration, true);
         double newY = getNewCoordinates(velocity, angularVelocity, duration, false);
         if (newX> widthField || newX < 0 || newY > heightField || newY < 0) {
-            System.out.println(widthField);
-            System.out.println(newX);
             double wallAngle = 0;
             if (newX > widthField || newX < 0)
                 wallAngle = Math.PI / 2;
@@ -101,13 +100,25 @@ public class Robot {
         return angle;
     }
 
+    private boolean canEat() {
+        return distance(food.getPositionX(), food.getPositionY(),
+                robotPositionX, robotPositionY) < 0.5;
+    }
+
+    private void eat() {
+        hunger += food.getSatiety();
+        haveFood = false;
+    }
+
     public void update() {
-        if (distance(targetPositionX, targetPositionY,
-                robotPositionX, robotPositionY) < 0.5)
+        hunger -= hungerLoss;
+        if (canEat()) {
+            eat();
             return;
+        }
 
         double angleToTarget = angleTo(robotPositionX, robotPositionY,
-                targetPositionX, targetPositionY);
+                food.getPositionX(), food.getPositionY());
         double angularVelocity = 0;
         if (angleToTarget > robotDirection)
             angularVelocity = MAX_ANGULAR_VELOCITY;
@@ -137,12 +148,20 @@ public class Robot {
         return this.robotDirection;
     }
 
-    public int getTargetPositionX() {
-        return this.targetPositionX;
+    public Food getFood() {
+        return food;
     }
 
-    public int getTargetPositionY() {
-        return this.targetPositionY;
+    public int getFoodPositionX() {
+        return this.food.getPositionX();
+    }
+
+    public int getFoodPositionY() {
+        return this.food.getPositionY();
+    }
+
+    public double getHunger() {
+        return hunger;
     }
 
     private static int round(double value) {
@@ -152,5 +171,14 @@ public class Robot {
     public void setSize(int width, int height) {
         this.widthField = width;
         this.heightField = height;
+    }
+
+    public void setHunger(double hunger) {
+        this.hunger = hunger;
+    }
+
+    public void setFood(Food food) {
+        haveFood = true;
+        this.food = food;
     }
 }

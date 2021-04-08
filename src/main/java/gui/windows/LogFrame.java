@@ -1,8 +1,6 @@
 package gui.windows;
 
-import log.LogChangeListener;
-import log.LogEntry;
-import log.LogWindowSource;
+import log.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,6 +20,7 @@ public class LogFrame extends JInternalFrame implements LogChangeListener {
         getContentPane().add(panel);
         pack();
         updateLogContent();
+
     }
 
     private void updateLogContent() {

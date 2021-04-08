@@ -1,33 +1,25 @@
 package gui;
 
-import logic.Food;
-import logic.GameObserver;
+import logic.*;
 import logic.Robot;
 
-import java.awt.Color;
-import java.awt.EventQueue;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.geom.AffineTransform;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 import javax.swing.JPanel;
 
 public class GameVisualizer extends JPanel {
-    private final Timer timer;
     private final GameObserver gameObserver;
 
     private static Timer initTimer() {
-        Timer timer = new Timer("events generator", true);
-        return timer;
+        return new Timer("events generator", true);
     }
 
     public GameVisualizer(GameObserver gameObserver) {
         this.gameObserver = gameObserver;
-        timer = initTimer();
+        Timer timer = initTimer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -71,15 +63,11 @@ public class GameVisualizer extends JPanel {
     public void paint(Graphics g) {
         super.paint(g);
         Graphics2D g2d = (Graphics2D)g;
-        for (Robot robot: gameObserver.getRobots()) {
+        for (Robot robot: gameObserver.getRobots())
             drawRobot(g2d, robot);
-        }
-        for (Food food: gameObserver.getFoods()) {
+
+        for (Food food: gameObserver.getFoods())
             drawFood(g2d, food);
-        }
-//        drawRobot(g2d, robot.getRobotPositionX(),
-//                robot.getRobotPositionY(), robot.getRobotDirection());
-//        drawFood(g2d, robot.getFoodPositionX(), robot.getFoodPositionY());
     }
 
     private static void fillOval(Graphics g, int centerX, int centerY,

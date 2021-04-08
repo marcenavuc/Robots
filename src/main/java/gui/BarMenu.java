@@ -3,10 +3,8 @@ package gui;
 import log.Logger;
 
 import javax.swing.*;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.util.Arrays;
-import java.util.List;
+import java.awt.event.*;
+import java.util.*;
 
 public class BarMenu {
     MainFrame mainFrame;
@@ -14,53 +12,19 @@ public class BarMenu {
     public BarMenu(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
     }
-    //    protected JMenuBar createMenuBar() {
-    //        JMenuBar menuBar = new JMenuBar();
-    //
-    //        //Set up the lone menu.
-    //        JMenu menu = new JMenu("Document");
-    //        menu.setMnemonic(KeyEvent.VK_D);
-    //        menuBar.add(menu);
-    //
-    //        //Set up the first menu item.
-    //        JMenuItem menuItem = new JMenuItem("New");
-    //        menuItem.setMnemonic(KeyEvent.VK_N);
-    //        menuItem.setAccelerator(KeyStroke.getKeyStroke(
-    //                KeyEvent.VK_N, ActionEvent.ALT_MASK));
-    //        menuItem.setActionCommand("new");
-    ////        menuItem.addActionListener(this);
-    //        menu.add(menuItem);
-    //
-    //        //Set up the second menu item.
-    //        menuItem = new JMenuItem("Quit");
-    //        menuItem.setMnemonic(KeyEvent.VK_Q);
-    //        menuItem.setAccelerator(KeyStroke.getKeyStroke(
-    //                KeyEvent.VK_Q, ActionEvent.ALT_MASK));
-    //        menuItem.setActionCommand("quit");
-    ////        menuItem.addActionListener(this);
-    //        menu.add(menuItem);
-    //
-    //        return menuBar;
-    //    }
 
-    public JMenuBar generateMenuBar() {
+    public JMenuBar generateMenuBar(AckFrame ackFrame) {
         JMenuBar menuBar = new JMenuBar();
-        menuBar.add(createMainMenu());
+        menuBar.add(createMainMenu(ackFrame));
         menuBar.add(createLookAndFeelMenu());
         menuBar.add(createTestMenu());
         return menuBar;
     }
 
-    //    private JMenu createMainMenu() {
-    //        JMenu file = new JMenu("Меню");
-    //        JMenuItem exit = new JMenuItem(new ExitAction(mainFrame));
-    //        file.add(exit);
-    //        return file;
-    //    }
-
-    private JMenu createMainMenu() {
-        return createMenu("Меню", KeyEvent.VK_Q, "Главное меню", createItem("Выход", 0, (event) -> {
-            if (MainFrame.getN(mainFrame, new Object[] { "Да", "Нет" }) == 0) {
+    private JMenu createMainMenu(AckFrame ackFrame) {
+        return createMenu("Меню", KeyEvent.VK_Q, "Главное меню",
+                createItem("Выход", 0, (event) -> {
+            if (ackFrame.ack("Закрыть окно?") == 0) {
                 mainFrame.unregister();
                 System.exit(0);
             }
@@ -68,7 +32,10 @@ public class BarMenu {
     }
 
     private JMenu createLookAndFeelMenu() {
-        return createMenu("Режим отображения", KeyEvent.VK_V, "Управление режимом отображения приложения", Arrays.asList(createItem("Системная схема", KeyEvent.VK_S, (event) -> {
+        return createMenu("Режим отображения", KeyEvent.VK_V,
+                "Управление режимом отображения приложения",
+                Arrays.asList(createItem("Системная схема",
+                        KeyEvent.VK_S, (event) -> {
             setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             mainFrame.invalidate();
         }), createItem("Универсальная схема", KeyEvent.VK_S, (event) -> {
@@ -78,7 +45,10 @@ public class BarMenu {
     }
 
     private JMenu createTestMenu() {
-        return createMenu("Тесты", KeyEvent.VK_T, "Тестовые команды", createItem("Сообщение в лог", KeyEvent.VK_S, (event) -> Logger.debug("Новая строка")));
+        return createMenu("Тесты",
+                KeyEvent.VK_T, "Тестовые команды",
+                createItem("Сообщение в лог",
+                        KeyEvent.VK_S, (event) -> Logger.debug("Новая строка")));
     }
 
     private void setLookAndFeel(String className) {

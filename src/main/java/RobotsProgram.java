@@ -1,5 +1,4 @@
-import gui.AckFrame;
-import gui.MainFrame;
+import gui.*;
 
 import javax.swing.*;
 import java.beans.PropertyVetoException;
@@ -24,7 +23,7 @@ public class RobotsProgram {
 
             if (checkExistFile("")) {
                 AckFrame ackFrame = new AckFrame();
-                notLoad = ackFrame.ack() != 0;
+                notLoad = ackFrame.ack("Загрузить последнее состояние окна?") != 0;
                 ackFrame.dispose();
             }
             try {

@@ -10,8 +10,8 @@ public class GameObserver {
     private ArrayList<Food> foods;
 
     public GameObserver() {
-        robots = new ArrayList<Robot>();
-        foods = new ArrayList<Food>();
+        robots = new ArrayList<>();
+        foods = new ArrayList<>();
     }
 
     public GameObserver(ArrayList<Robot> robots, ArrayList<Food> foods) {
@@ -44,15 +44,13 @@ public class GameObserver {
 
     private void deleteFoodFromMap(Food food) {
         foods.remove(food);
-        for (Robot robot: robots) {
-            if (robot.getFood() == food) {
+        for (Robot robot: robots)
+            if (robot.getFood() == food)
                 robot.haveFood = false;
-            }
-        }
     }
 
     public void update() {
-        if (robots == null | robots.size() == 0)
+        if (!(robots != null && robots.size() != 0))
             return;
         robots.removeIf(robot -> robot.getHunger() < 0);
         for (Robot robot : robots) {
@@ -102,8 +100,7 @@ public class GameObserver {
     }
 
     public void updateSize(int width, int height) {
-        for (Robot robot: robots) {
+        for (Robot robot: robots)
             robot.setSize(width, height);
-        }
     }
 }

@@ -1,4 +1,4 @@
-package gui.serialization;
+package serialization;
 
 import gui.MainFrame;
 import gui.windows.LogFrame;

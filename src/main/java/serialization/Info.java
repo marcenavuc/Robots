@@ -1,4 +1,4 @@
-package gui.serialization;
+package serialization;
 
 import java.io.Serializable;
 

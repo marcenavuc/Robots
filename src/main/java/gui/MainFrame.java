@@ -3,7 +3,6 @@ package gui;
 import gui.windows.*;
 import log.Logger;
 import logic.GameObserver;
-import logic.Robot;
 import utils.Const;
 
 import javax.swing.*;
@@ -12,16 +11,19 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyVetoException;
 
-import static gui.serialization.Serializer.*;
+import static serialization.Serializer.*;
 
 public class MainFrame extends JFrame {
     private final boolean notLoad;
     private final transient JDesktopPane desktopPane = new JDesktopPane();
+
     public GameFrame gameFrame;
     public LogFrame logFrame;
     public GameObserver gameObserver;
+    AckFrame ackFrame;
 
     public MainFrame(boolean notLoad) throws PropertyVetoException {
+        ackFrame = new AckFrame();
         this.notLoad = notLoad;
         int inset = 50;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -36,21 +38,34 @@ public class MainFrame extends JFrame {
 
         gameObserver = new GameObserver();
 
+        InternalFrameAdapter adapter = new InternalFrameAdapter() {
+            @Override
+            public void internalFrameClosing(InternalFrameEvent event) {
+                super.internalFrameClosing(event);
+                if (addOptionPane(event) == 0) {
+                    saveWindowState(logFrame, Const.logFile);
+                    logFrame.exit();
+                }
+            }
+        };
+
         logFrame = createLogWindow();
+        logFrame.addInternalFrameListener(adapter);
         addWindow(logFrame);
 
         gameFrame = createGameWindow(gameObserver);
+        gameFrame.addInternalFrameListener(adapter);
         addWindow(gameFrame);
 
         BarMenu barMenu = new BarMenu(this);
-        setJMenuBar(barMenu.generateMenuBar());
+        setJMenuBar(barMenu.generateMenuBar(ackFrame));
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
         JFrame temp = this;
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                if (getN(temp, new Object[] { "Да", "Нет" }) == 0) {
+                if (ackFrame.ack("Закрыть окно?") == 0) {
                     saveWindowState(gameFrame, Const.gameFile);
                     saveWindowState(logFrame, Const.logFile);
                     saveWindowState(temp, Const.mainFile);
@@ -62,39 +77,11 @@ public class MainFrame extends JFrame {
         setVisible(true);
     }
 
-    protected static int getN(Component frame, Object[] buttons) {
-        return JOptionPane.showOptionDialog(frame,
-                "Закрыть окно?",
-                "Подтверждение",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null, buttons, buttons[1]);
-    }
-
-    protected static int getN(JFrame frame, Object[] buttons) {
-        return JOptionPane.showOptionDialog(frame,
-                "Закрыть окно?",
-                "Подтверждение",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null, buttons, buttons[1]);
-    }
-
     protected GameFrame createGameWindow(GameObserver gameObserver) throws PropertyVetoException {
         GameFrame gameFrame = new GameFrame(gameObserver);
         if (notLoad || loadWindowState(Const.gameFile, gameFrame) == null)
             gameFrame.setSize(400, 400);
 
-        gameFrame.addInternalFrameListener(new InternalFrameAdapter() {
-            @Override
-            public void internalFrameClosing(InternalFrameEvent event) {
-                super.internalFrameClosing(event);
-                if (addOptionPane(event) == 0) {
-                    saveWindowState(gameFrame, Const.gameFile);
-                    gameFrame.dispose();
-                }
-            }
-        });
         gameFrame.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -111,24 +98,13 @@ public class MainFrame extends JFrame {
             logFrame.m_logContent.setSize(300, 800);
         }
 
-        logFrame.addInternalFrameListener(new InternalFrameAdapter() {
-            @Override
-            public void internalFrameClosing(InternalFrameEvent event) {
-                super.internalFrameClosing(event);
-                if (addOptionPane(event) == 0) {
-                    saveWindowState(logFrame, Const.logFile);
-                    logFrame.exit();
-                }
-            }
-        });
-
         logFrame.pack();
         Logger.debug("Протокол работает");
         return logFrame;
     }
 
     private int addOptionPane(InternalFrameEvent event) {
-        if (getN(event.getInternalFrame(), new Object[] { "Да", "Нет" }) == 0) {
+        if (ackFrame.ack("Закрыть окно?") == 0) {
             event.getInternalFrame().setVisible(false);
             return 0;
         }

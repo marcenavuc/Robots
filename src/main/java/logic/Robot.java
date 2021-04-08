@@ -1,57 +1,29 @@
 package logic;
 
-import java.awt.*;
-import java.io.Serializable;
-
-public class Robot implements Serializable {
-    private static final long serialVersionUID = 2L;
-    private static final double MAX_VELOCITY = 0.1;
-    private static final double MAX_ANGULAR_VELOCITY = 0.001;
+public class Robot {
     private volatile double robotPositionX = 100;
     private volatile double robotPositionY = 100;
     private volatile double robotDirection = 0;
-    private volatile double width;
-    private volatile double height;
-    private volatile int targetPositionX = 150;
-    private volatile int targetPositionY = 100;
 
-    public Robot(int width, int height) {
+    private volatile double widthField;
+    private volatile double heightField;
+
+    private volatile Food food = new Food(150, 100, 1);
+    private volatile double hunger = 10;
+    private volatile double hungerLoss = 0;
+
+    private static final double MAX_VELOCITY = 0.1;
+    private static final double MAX_ANGULAR_VELOCITY = 0.001;
+
+    public volatile boolean haveFood = false;
+
+    public Robot(double robotPositionX, double robotPositionY, int widthField, int heightField) {
+        setRobotPosition(robotPositionX, robotPositionY);
+        setSize(widthField, heightField);
+    }
+
+    public Robot(int width, int height){
         setSize(width, height);
-    }
-
-    private static double distance(double x1, double y1, double x2, double y2) {
-        double diffX = x1 - x2;
-        double diffY = y1 - y2;
-        return Math.sqrt(diffX * diffX + diffY * diffY);
-    }
-
-    private static double angleTo(double fromX, double fromY, double toX, double toY) {
-        double diffX = toX - fromX;
-        double diffY = toY - fromY;
-        return asNormalizedRadians(Math.atan2(diffY, diffX));
-    }
-
-    private static double applyLimits(double value, double min, double max) {
-        if (value < min) { return min; }
-
-        return Math.min(value, max);
-    }
-
-    private static double asNormalizedRadians(double angle) {
-        while (angle < 0) { angle += 2 * Math.PI; }
-
-        while (angle >= 2 * Math.PI) { angle -= 2 * Math.PI; }
-
-        return angle;
-    }
-
-    private static int round(double value) {
-        return (int) (value + 0.5);
-    }
-
-    public void setTargetPosition(Point point) {
-        targetPositionX = point.x;
-        targetPositionY = point.y;
     }
 
     public void setRobotPosition(double x, double y) {
@@ -59,15 +31,42 @@ public class Robot implements Serializable {
         this.robotPositionY = y;
     }
 
-    private double getNewCoordinates(double velocity, double angularVelocity, double duration, boolean x) {
+    private static double distance(double x1, double y1,
+                                   double x2, double y2) {
+        double diffX = x1 - x2;
+        double diffY = y1 - y2;
+        return Math.sqrt(diffX * diffX + diffY * diffY);
+    }
+
+    private static double angleTo(double fromX, double fromY,
+                                  double toX, double toY) {
+        double diffX = toX - fromX;
+        double diffY = toY - fromY;
+        return asNormalizedRadians(Math.atan2(diffY, diffX));
+    }
+    private static double applyLimits(double value, double min, double max) {
+        if (value < min)
+            return min;
+
+        return Math.min(value, max);
+    }
+
+    private double getNewCoordinates(double velocity, double angularVelocity,
+                                     double duration, boolean x) {
         if (x) {
-            double newX = robotPositionX + velocity / angularVelocity * (Math.sin(robotDirection + angularVelocity * duration) - Math.sin(robotDirection));
-            if (!Double.isFinite(newX)) { newX = robotPositionX + velocity * duration * Math.cos(robotDirection); }
+            double newX = robotPositionX + velocity / angularVelocity *
+                    (Math.sin(robotDirection  + angularVelocity * duration) -
+                            Math.sin(robotDirection));
+            if (!Double.isFinite(newX))
+                newX = robotPositionX + velocity * duration * Math.cos(robotDirection);
 
             return newX;
         }
-        double newY = robotPositionY - velocity / angularVelocity * (Math.cos(robotDirection + angularVelocity * duration) - Math.cos(robotDirection));
-        if (!Double.isFinite(newY)) { newY = robotPositionY + velocity * duration * Math.sin(robotDirection); }
+        double newY = robotPositionY - velocity / angularVelocity *
+                (Math.cos(robotDirection  + angularVelocity * duration) -
+                        Math.cos(robotDirection));
+        if (!Double.isFinite(newY))
+            newY = robotPositionY + velocity * duration * Math.sin(robotDirection);
 
         return newY;
     }
@@ -75,31 +74,60 @@ public class Robot implements Serializable {
     private void moveRobot(double velocity, double angularVelocity, double duration) {
         velocity = applyLimits(velocity, 0, MAX_VELOCITY);
         angularVelocity = applyLimits(angularVelocity, -MAX_ANGULAR_VELOCITY, MAX_ANGULAR_VELOCITY);
+
         double newX = getNewCoordinates(velocity, angularVelocity, duration, true);
         double newY = getNewCoordinates(velocity, angularVelocity, duration, false);
-        if (newX > width || newX < 0 || newY > height || newY < 0) {
+        if (newX> widthField || newX < 0 || newY > heightField || newY < 0) {
             double wallAngle = 0;
-            if (newX > width || newX < 0) { wallAngle = Math.PI / 2; }
+            if (newX > widthField || newX < 0)
+                wallAngle = Math.PI / 2;
 
             robotDirection = wallAngle * 2 - robotDirection;
             newX = getNewCoordinates(velocity, angularVelocity, duration, true);
             newY = getNewCoordinates(velocity, angularVelocity, duration, false);
-        } else { robotDirection = asNormalizedRadians(robotDirection + angularVelocity * duration); }
+        } else
+            robotDirection = asNormalizedRadians(robotDirection + angularVelocity * duration);
         setRobotPosition(newX, newY);
     }
 
+    private static double asNormalizedRadians(double angle) {
+        while (angle < 0)
+            angle += 2 * Math.PI;
+
+        while (angle >= 2 * Math.PI)
+            angle -= 2 * Math.PI;
+
+        return angle;
+    }
+
+    private boolean canEat() {
+        return distance(food.getPositionX(), food.getPositionY(),
+                robotPositionX, robotPositionY) < 0.5;
+    }
+
+    private void eat() {
+        hunger += food.getSatiety();
+        haveFood = false;
+    }
+
     public void update() {
-        if (distance(targetPositionX, targetPositionY, robotPositionX, robotPositionY) < 0.5) { return; }
+        hunger -= hungerLoss;
+        if (haveFood & food != null & canEat()) {
+            eat();
+            return;
+        }
 
-        double angleToTarget = angleTo(robotPositionX, robotPositionY, targetPositionX, targetPositionY);
+        double angleToTarget = angleTo(robotPositionX, robotPositionY,
+                food.getPositionX(), food.getPositionY());
         double angularVelocity = 0;
-        if (angleToTarget > robotDirection) { angularVelocity = MAX_ANGULAR_VELOCITY; }
+        if (angleToTarget > robotDirection)
+            angularVelocity = MAX_ANGULAR_VELOCITY;
 
-        if (angleToTarget < robotDirection) { angularVelocity = -MAX_ANGULAR_VELOCITY; }
+        if (angleToTarget < robotDirection)
+            angularVelocity = -MAX_ANGULAR_VELOCITY;
 
         moveRobot(MAX_VELOCITY, angularVelocity, 10);
     }
-
     public int getRobotPositionX() {
         return round(this.robotPositionX);
     }
@@ -120,35 +148,37 @@ public class Robot implements Serializable {
         return this.robotDirection;
     }
 
-    public int getTargetPositionX() {
-        return this.targetPositionX;
+    public Food getFood() {
+        return food;
     }
 
-    public int getTargetPositionY() {
-        return this.targetPositionY;
+    public int getFoodPositionX() {
+        return this.food.getPositionX();
+    }
+
+    public int getFoodPositionY() {
+        return this.food.getPositionY();
+    }
+
+    public double getHunger() {
+        return hunger;
+    }
+
+    private static int round(double value) {
+        return (int)(value + 0.5);
     }
 
     public void setSize(int width, int height) {
-        this.width = width;
-        this.height = height;
-        if (targetPositionX > width)
-            targetPositionX = width - targetPositionX % width;
-
-        if (targetPositionY > height)
-            targetPositionY = height - targetPositionY % height;
-
-        if (robotPositionX > width)
-            robotPositionX = width - robotPositionX % width;
-
-        if (robotPositionY > height)
-            robotPositionY = height - robotPositionY % height;
+        this.widthField = width;
+        this.heightField = height;
     }
 
-    public double getWidth() {
-        return width;
+    public void setHunger(double hunger) {
+        this.hunger = hunger;
     }
 
-    public double getHeight() {
-        return height;
+    public void setFood(Food food) {
+        haveFood = true;
+        this.food = food;
     }
 }

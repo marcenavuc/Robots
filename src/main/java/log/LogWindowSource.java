@@ -2,18 +2,13 @@ package log;
 
 import utils.LimitedConcurrentLinkedQueue;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Collections;
 
-/**
- * Что починить:
- * 1. Этот класс порождает утечку ресурсов (связанные слушатели оказываются
- * удерживаемыми в памяти)
- * 2. Этот класс хранит активные сообщения лога, но в такой реализации он
- * их лишь накапливает. Надо же, чтобы количество сообщений в логе было ограничено
- * величиной m_iQueueLength (т.е. реально нужна очередь сообщений
- * ограниченного размера)
- */
-public class LogWindowSource {
+public class LogWindowSource implements Externalizable {
     private final LimitedConcurrentLinkedQueue<LogEntry> m_messages;
     private final LimitedConcurrentLinkedQueue<LogChangeListener> m_listeners;
     private volatile LogChangeListener[] m_activeListeners;
@@ -67,5 +62,15 @@ public class LogWindowSource {
 
     public Iterable<LogEntry> all() {
         return m_messages;
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+
     }
 }

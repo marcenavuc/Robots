@@ -1,23 +1,20 @@
-package gui;
+package gui.windows;
 
+import gui.GameVisualizer;
 import logic.Robot;
 
+import javax.swing.*;
 import java.awt.*;
 
-import javax.swing.*;
+public class GameFrame extends JInternalFrame {
+    private final transient GameVisualizer m_visualizer;
 
-public class GameWindow extends JInternalFrame
-{
-    private final GameVisualizer m_visualizer;
-    public GameWindow(Robot robot)
-    {
+    public GameFrame(Robot robot) {
         super("Игровое поле", true, true, true, true);
         m_visualizer = new GameVisualizer(robot);
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(m_visualizer, BorderLayout.CENTER);
-        getContentPane().add(panel);
+        getContentPane().add(panel, BorderLayout.CENTER);
         pack();
     }
-
-
 }

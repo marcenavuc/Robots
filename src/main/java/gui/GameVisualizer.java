@@ -37,7 +37,8 @@ public class GameVisualizer extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 int button = e.getButton();
                 if (button == 1) {
-                    Robot robot = new Robot(e.getX(), e.getY(), getWidth(), getHeight());
+                    Robot robot = new Robot(e.getX(), e.getY(),
+                            getWidth(), getHeight(), (long)gameObserver.getRobots().size());
                     gameObserver.addRobot(robot);
                 }
                 if (button == 3) {

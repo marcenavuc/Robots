@@ -1,29 +1,51 @@
 package logic;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class Robot {
+    private final Long id;
     private volatile double robotPositionX = 100;
     private volatile double robotPositionY = 100;
     private volatile double robotDirection = 0;
+    private GameObserver gameObserver;
 
     private volatile double widthField;
     private volatile double heightField;
 
-    private volatile Food food = new Food(150, 100, 1);
-    private volatile double hunger = 10;
+    private volatile Food food;
+    private volatile double hunger = 0;
     private volatile double hungerLoss = 0;
 
-    private static final double MAX_VELOCITY = 0.1;
-    private static final double MAX_ANGULAR_VELOCITY = 0.001;
+    private final double MAX_VELOCITY = 0.1;
+    private final double MAX_ANGULAR_VELOCITY = 0.001;
+    private final long MAX_LIVE_WITHOUT_FOOD = 1000 * 5;
+
+    private Timer timer;
 
     public volatile boolean haveFood = false;
 
-    public Robot(double robotPositionX, double robotPositionY, int widthField, int heightField) {
+    public Robot(double robotPositionX, double robotPositionY,
+                 int widthField, int heightField, Long id) {
         setRobotPosition(robotPositionX, robotPositionY);
         setSize(widthField, heightField);
+        this.id = id;
+        initTimer();
     }
 
-    public Robot(int width, int height){
+    public Robot(int width, int height, Long id){
         setSize(width, height);
+        this.id = id;
+        initTimer();
+    }
+
+    private void initTimer(){
+         timer = new Timer();
+         timer.schedule(new CheckAliveRobot(), MAX_LIVE_WITHOUT_FOOD);
+    }
+
+    public void addObserver(GameObserver gameObserver){
+        this.gameObserver = gameObserver;
     }
 
     public void setRobotPosition(double x, double y) {
@@ -101,7 +123,7 @@ public class Robot {
     }
 
     private boolean canEat() {
-        return distance(food.getPositionX(), food.getPositionY(),
+        return food != null && distance(food.getPositionX(), food.getPositionY(),
                 robotPositionX, robotPositionY) < 0.5;
     }
 
@@ -111,6 +133,9 @@ public class Robot {
     }
 
     public void update() {
+        if (food == null)
+            return;
+
         hunger -= hungerLoss;
         if (haveFood & food != null & canEat()) {
             eat();
@@ -128,6 +153,7 @@ public class Robot {
 
         moveRobot(MAX_VELOCITY, angularVelocity, 10);
     }
+
     public int getRobotPositionX() {
         return round(this.robotPositionX);
     }
@@ -152,13 +178,13 @@ public class Robot {
         return food;
     }
 
-    public int getFoodPositionX() {
-        return this.food.getPositionX();
-    }
-
-    public int getFoodPositionY() {
-        return this.food.getPositionY();
-    }
+//    public int getFoodPositionX() {
+//        return this.food.getPositionX();
+//    }
+//
+//    public int getFoodPositionY() {
+//        return this.food.getPositionY();
+//    }
 
     public double getHunger() {
         return hunger;
@@ -180,5 +206,21 @@ public class Robot {
     public void setFood(Food food) {
         haveFood = true;
         this.food = food;
+    }
+
+    public void delFood(){
+        food = null;
+    }
+
+    protected class CheckAliveRobot extends TimerTask {
+        public void run() {
+            if (hunger <= 0 && gameObserver != null) {
+                gameObserver.getMapRobots().remove(id);
+                timer.cancel();
+            }
+            else
+                if(hunger > 0 && gameObserver != null)
+                    hunger =- 1;
+        }
     }
 }

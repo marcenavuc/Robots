@@ -112,7 +112,7 @@ public class Robot {
 
     public void update() {
         hunger -= hungerLoss;
-        if (canEat()) {
+        if (haveFood & food != null & canEat()) {
             eat();
             return;
         }

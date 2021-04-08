@@ -42,6 +42,15 @@ public class GameObserver {
         return nearestFood;
     }
 
+    private void deleteFoodFromMap(Food food) {
+        foods.remove(food);
+        for (Robot robot: robots) {
+            if (robot.getFood() == food) {
+                robot.haveFood = false;
+            }
+        }
+    }
+
     public void update() {
         if (robots == null | robots.size() == 0)
             return;
@@ -49,13 +58,20 @@ public class GameObserver {
         for (Robot robot : robots) {
             if (!robot.haveFood & robot.getFood() != null) {
                 Food robotFood = robot.getFood();
-                foods.remove(robotFood);
+                deleteFoodFromMap(robotFood);
             }
             if (!robot.haveFood & foods.size() > 0) {
                 Food nearestFood = findClosedFoodToRobot(robot);
                 attachFoodToRobot(robot, nearestFood);
             }
             robot.update();
+        }
+    }
+
+    private void updateDirectionsToFood() {
+        for (Robot robot: robots) {
+            Food nearestFood = findClosedFoodToRobot(robot);
+            attachFoodToRobot(robot, nearestFood);
         }
     }
 
@@ -77,10 +93,12 @@ public class GameObserver {
 
     public void addFood(Food food) {
         foods.add(food);
+        updateDirectionsToFood();
     }
 
     public void addRobot(Robot robot) {
         robots.add(robot);
+        updateDirectionsToFood();
     }
 
     public void updateSize(int width, int height) {

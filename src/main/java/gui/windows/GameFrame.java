@@ -1,5 +1,6 @@
-package gui;
+package gui.windows;
 
+import gui.GameVisualizer;
 import logic.GameObserver;
 import logic.Robot;
 
@@ -7,10 +8,10 @@ import java.awt.*;
 
 import javax.swing.*;
 
-public class GameWindow extends JInternalFrame
+public class GameFrame extends JInternalFrame
 {
     private final GameVisualizer m_visualizer;
-    public GameWindow(GameObserver gameObserver)
+    public GameFrame(GameObserver gameObserver)
     {
         super("Игровое поле", true, true, true, true);
         m_visualizer = new GameVisualizer(gameObserver);

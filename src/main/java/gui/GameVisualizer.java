@@ -17,7 +17,7 @@ import java.util.TimerTask;
 import javax.swing.JPanel;
 
 public class GameVisualizer extends JPanel {
-    private final Timer timer = initTimer();
+    private final Timer timer;
     private final GameObserver gameObserver;
 
     private static Timer initTimer() {
@@ -27,6 +27,7 @@ public class GameVisualizer extends JPanel {
 
     public GameVisualizer(GameObserver gameObserver) {
         this.gameObserver = gameObserver;
+        timer = initTimer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {

@@ -2,6 +2,7 @@ package gui;
 
 import gui.windows.*;
 import log.Logger;
+import logic.GameObserver;
 import logic.Robot;
 import utils.Const;
 
@@ -18,7 +19,7 @@ public class MainFrame extends JFrame {
     private final transient JDesktopPane desktopPane = new JDesktopPane();
     public GameFrame gameFrame;
     public LogFrame logFrame;
-    public Robot robot;
+    public GameObserver gameObserver;
 
     public MainFrame(boolean notLoad) throws PropertyVetoException {
         this.notLoad = notLoad;
@@ -33,12 +34,12 @@ public class MainFrame extends JFrame {
         if (notLoad || loadWindowState(Const.mainFile, this) == null)
             setExtendedState(Frame.MAXIMIZED_BOTH);
 
+        gameObserver = new GameObserver();
+
         logFrame = createLogWindow();
         addWindow(logFrame);
 
-        Robot loadedRobot = loadRobot(Const.robotFile);
-        robot = loadedRobot == null ? new Robot(400, 400) : loadedRobot;
-        gameFrame = createGameWindow(robot);
+        gameFrame = createGameWindow(gameObserver);
         addWindow(gameFrame);
 
         BarMenu barMenu = new BarMenu(this);
@@ -53,7 +54,6 @@ public class MainFrame extends JFrame {
                     saveWindowState(gameFrame, Const.gameFile);
                     saveWindowState(logFrame, Const.logFile);
                     saveWindowState(temp, Const.mainFile);
-                    saveRobot(robot, Const.robotFile);
                     System.exit(0);
                 }
             }
@@ -80,8 +80,8 @@ public class MainFrame extends JFrame {
                 null, buttons, buttons[1]);
     }
 
-    protected GameFrame createGameWindow(Robot robot) throws PropertyVetoException {
-        GameFrame gameFrame = new GameFrame(robot);
+    protected GameFrame createGameWindow(GameObserver gameObserver) throws PropertyVetoException {
+        GameFrame gameFrame = new GameFrame(gameObserver);
         if (notLoad || loadWindowState(Const.gameFile, gameFrame) == null)
             gameFrame.setSize(400, 400);
 
@@ -98,7 +98,7 @@ public class MainFrame extends JFrame {
         gameFrame.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                robot.setSize(gameFrame.getWidth(), gameFrame.getHeight());
+                gameObserver.updateSize(gameFrame.getWidth(), gameFrame.getHeight());
             }
         });
         return gameFrame;

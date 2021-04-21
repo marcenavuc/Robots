@@ -4,7 +4,6 @@ import utils.MyMath;
 import utils.Tuple;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.*;
@@ -19,12 +18,11 @@ public class GameObserver {
         robots = new ConcurrentHashMap<>();
         foods = new ConcurrentHashMap<>();
         initTimer();
+//        ThreadPoolExecutor executor =
+//                (ThreadPoolExecutor) Executors.newFixedThreadPool(4);
+//        for (Robot robot : robots.values())
+//            executor.submit(robot);
     }
-
-//    public GameObserver(ArrayList<Robot> robots, ArrayList<Food> foods) {
-//        this.robots = robots;
-//        this.foods = foods;
-//    }
 
     public void attachFoodToRobot(Robot robot, Food food) {
         robot.setFood(food);
@@ -80,14 +78,6 @@ public class GameObserver {
         }
     }
 
-//    public void setFoods(CopyOnWriteArrayList<Food> foods) {
-//        this.foods = foods;
-//    }
-
-//    public void setRobots(ArrayList<Robot> robots) {
-//        this.robots = robots;
-//    }
-
     public Collection<Food> getFoods() {
         return foods.values();
     }
@@ -128,7 +118,9 @@ public class GameObserver {
     }
 
     private void initTimer(){
-        Timer timer = new Timer("robots_timer");
-        timer.scheduleAtFixedRate (new CheckAliveRobot(), MAX_LIVE_WITHOUT_FOOD + 1000, MAX_LIVE_WITHOUT_FOOD);
+        Timer timer = new Timer("robots_timer", true);
+        timer.scheduleAtFixedRate (new CheckAliveRobot(),
+                MAX_LIVE_WITHOUT_FOOD + 1000,
+                MAX_LIVE_WITHOUT_FOOD);
     }
 }

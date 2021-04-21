@@ -5,7 +5,7 @@ import utils.Tuple;
 
 import static utils.MyMath.*;
 
-public class Robot {
+public class Robot /*implements Runnable*/ {
     private volatile Tuple<Double, Double> robotPosition;
     private volatile double robotDirection = 0;
     private GameObserver gameObserver;
@@ -117,4 +117,9 @@ public class Robot {
         targetPosition = null;
         satiety = 0;
     }
+
+//    @Override
+//    public void run() {
+//        update();
+//    }
 }

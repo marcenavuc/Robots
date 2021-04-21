@@ -1,10 +1,12 @@
 package logic;
 
-public class Food {
-    private volatile int positionX;
-    private volatile int positionY;
+import utils.Tuple;
 
-    private  volatile double satiety;
+public class Food {
+    private final int positionX;
+    private final int positionY;
+
+    private final double satiety;
 
     public Food(int positionX, int positionY, double satiety) {
         this.positionX = positionX;
@@ -12,14 +14,14 @@ public class Food {
         this.satiety = satiety;
     }
 
-    public void setPosition(int x, int y) {
-        positionX = x;
-        positionY = y;
-    }
-
-    public void setSatiety(double satiety) {
-        this.satiety = satiety;
-    }
+//    public void setPosition(int x, int y) {
+//        positionX = x;
+//        positionY = y;
+//    }
+//
+//    public void setSatiety(double satiety) {
+//        this.satiety = satiety;
+//    }
 
     public int getPositionX() {
         return positionX;
@@ -31,5 +33,9 @@ public class Food {
 
     public double getSatiety() {
         return satiety;
+    }
+
+    public Tuple<Integer, Integer> getPosition() {
+        return new Tuple<>(positionX, positionY);
     }
 }

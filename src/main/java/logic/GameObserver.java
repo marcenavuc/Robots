@@ -1,20 +1,24 @@
 package logic;
 
-import utils.Math;
+import utils.MyMath;
+import utils.Tuple;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.*;
 
 public class GameObserver {
     private long counters;
-    private ConcurrentHashMap<Long, Robot> robots;
-    private CopyOnWriteArrayList<Food> foods;
+    private final ConcurrentHashMap<Long, Robot> robots;
+    private final ConcurrentHashMap<Tuple<Integer, Integer>, Food> foods;
+    private final long MAX_LIVE_WITHOUT_FOOD = 1000 * 5;
 
     public GameObserver() {
         robots = new ConcurrentHashMap<>();
-        foods = new CopyOnWriteArrayList<>();
+        foods = new ConcurrentHashMap<>();
+        initTimer();
     }
 
 //    public GameObserver(ArrayList<Robot> robots, ArrayList<Food> foods) {
@@ -27,15 +31,16 @@ public class GameObserver {
     }
 
     public Food findClosedFoodToRobot(Robot robot) {
-        if (foods == null || foods.size() == 0)
+        if (foods == null)
             return null;
-        double distance = Double.MAX_VALUE;
-        Food nearestFood = foods.get(0);
-        for (Food food : foods) {
 
-            double currentDistance = Math.findDistance(
-                    robot.getRobotPositionX(),
-                    robot.getRobotPositionY(),
+        double distance = Double.MAX_VALUE;
+        Food nearestFood = null;
+        for (Food food : foods.values()) {
+
+            double currentDistance = MyMath.findDistance(
+                    robot.getRobotPosition().getKey(),
+                    robot.getRobotPosition().getValue(),
                     food.getPositionX(),
                     food.getPositionY());
 
@@ -47,11 +52,14 @@ public class GameObserver {
         return nearestFood;
     }
 
-    private void deleteFoodFromMap(Food food) {
-        foods.remove(food);
-        for (long idxRobot: robots.keySet())
-            if (robots.get(idxRobot).getFood() == food)
-                robots.get(idxRobot).haveFood = false;
+    protected void deleteFoodFromMap(Tuple<Integer, Integer> target) {
+        foods.keySet().remove(target);
+        for (long idxRobot: robots.keySet()) {
+            Tuple<Integer, Integer> targetPos = robots.get(idxRobot).getTarget();
+            if (targetPos.getKey() - target.getKey() <= 0.5
+                && targetPos.getValue() - target.getValue() <= 0.5)
+                robots.get(idxRobot).delFood();
+        }
     }
 
     public void update() {
@@ -59,17 +67,8 @@ public class GameObserver {
             return;
         //robots.removeIf(robot -> robot.getHunger() < 0);
         for (long idxRobot: robots.keySet()) {
-            Robot robot = robots.get(idxRobot);
-            if (!robot.haveFood & robot.getFood() != null) {
-                Food robotFood = robot.getFood();
-                deleteFoodFromMap(robotFood);
-                robot.delFood();
-            }
-            if (!robot.haveFood & foods.size() > 0) {
-                Food nearestFood = findClosedFoodToRobot(robot);
-                attachFoodToRobot(robot, nearestFood);
-            }
-            robot.update();
+            if (robots.get(idxRobot) != null)
+                robots.get(idxRobot).update();
         }
     }
 
@@ -81,16 +80,16 @@ public class GameObserver {
         }
     }
 
-    public void setFoods(CopyOnWriteArrayList<Food> foods) {
-        this.foods = foods;
-    }
+//    public void setFoods(CopyOnWriteArrayList<Food> foods) {
+//        this.foods = foods;
+//    }
 
 //    public void setRobots(ArrayList<Robot> robots) {
 //        this.robots = robots;
 //    }
 
-    public List<Food> getFoods() {
-        return foods;
+    public Collection<Food> getFoods() {
+        return foods.values();
     }
 
     public ConcurrentHashMap<Long, Robot> getMapRobots(){
@@ -98,12 +97,11 @@ public class GameObserver {
     }
 
     public Collection<Robot> getRobots() {
-        Collection<Robot> temp = robots.values();
-        return temp;
+        return robots.values();
     }
 
     public void addFood(Food food) {
-        foods.add(food);
+        foods.put(food.getPosition(), food);
         updateDirectionsToFood();
     }
 
@@ -114,7 +112,23 @@ public class GameObserver {
     }
 
     public void updateSize(int width, int height) {
-        for (long idxRobot: robots.keySet())
-            robots.get(idxRobot).setSize(width, height);
+        MyMath.setSize(width, height);
+    }
+
+    private class CheckAliveRobot extends TimerTask {
+        public void run() {
+            for (long id : robots.keySet()) {
+                Robot robot = robots.get(id);
+                if (robot.getHunger() <= 0)
+                    getMapRobots().remove(id);
+                else
+                    robot.vichHunger();
+            }
+        }
+    }
+
+    private void initTimer(){
+        Timer timer = new Timer("robots_timer");
+        timer.scheduleAtFixedRate (new CheckAliveRobot(), MAX_LIVE_WITHOUT_FOOD + 1000, MAX_LIVE_WITHOUT_FOOD);
     }
 }

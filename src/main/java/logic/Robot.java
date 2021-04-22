@@ -8,7 +8,7 @@ import java.util.TimerTask;
 
 import static utils.MyMath.*;
 
-public class Robot implements Runnable {
+public class Robot /*implements Runnable*/ {
     private volatile Tuple<Double, Double> robotPosition;
     private volatile double robotDirection = 0;
     private GameObserver gameObserver;
@@ -22,29 +22,29 @@ public class Robot implements Runnable {
     private final long MAX_LIVE_WITHOUT_FOOD = 1000 * 5;
 
     public boolean isAlive;
-    private final Thread thread;
+//    private final Thread thread;
     private Timer timer;
 
 
     public Robot(double robotPositionX, double robotPositionY) {
         setRobotPosition(robotPositionX, robotPositionY);
-        thread = new Thread(this);
-        thread.setDaemon(true);
+//        thread = new Thread(this);
+//        thread.setDaemon(true);
         isAlive = true;
         initTimer();
     }
 
-    public void start() {
-        thread.start();
-    }
-
-    public void interrupt() {
-        thread.interrupt();
-    }
-
-    public boolean checkStart() {
-        return thread.isAlive();
-    }
+//    public void start() {
+//        thread.start();
+//    }
+//
+//    public void interrupt() {
+//        thread.interrupt();
+//    }
+//
+//    public boolean checkStart() {
+//        return thread.isAlive();
+//    }
 
     public void addObserver(GameObserver gameObserver) {
         this.gameObserver = gameObserver;
@@ -137,12 +137,12 @@ public class Robot implements Runnable {
         targetPosition = null;
         satiety = 0;
     }
-
-    @Override
-    public void run() {
-        while (isAlive)
-            update();
-    }
+//
+//    @Override
+//    public void run() {
+//        while (isAlive)
+//            update();
+//    }
 
     private class CheckAliveRobot extends TimerTask {
         public void run() {

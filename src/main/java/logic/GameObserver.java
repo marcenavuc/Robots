@@ -43,12 +43,12 @@ public class GameObserver {
         for (long idxRobot: robots.keySet()) {
             Robot robot = robots.get(idxRobot);
             if (robot.isAlive) {
-                if (!robot.checkStart())
-                    robot.start();
-                //                robots.get(idxRobot).update();
+//                if (!robot.checkStart())
+//                    robot.start();
+                                robots.get(idxRobot).update();
             }
             else {
-                robot.interrupt();
+//                robot.interrupt();
                 robots.remove(idxRobot);
             }
         }

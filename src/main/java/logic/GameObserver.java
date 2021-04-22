@@ -1,12 +1,9 @@
 package logic;
 
 import utils.Position;
-import utils.Tuple;
 
 import java.util.Collection;
 import java.util.concurrent.*;
-
-import logic.Robot;
 
 public class GameObserver {
     private long counters;
@@ -14,9 +11,10 @@ public class GameObserver {
     private final ConcurrentHashMap<Position, Food> foods;
 
 
-    public GameObserver() {
+    public GameObserver(int width, int height) {
         robots = new ConcurrentHashMap<>();
         foods = new ConcurrentHashMap<>();
+        updateSize(width, height);
         //initTimer();
 //        ThreadPoolExecutor executor =
 //                (ThreadPoolExecutor) Executors.newFixedThreadPool(4);
@@ -34,12 +32,12 @@ public class GameObserver {
             Position targetPos = robots.get(idxRobot).getTarget();
             if (targetPos.getX() - target.getX() <= 0.5
                 && targetPos.getY() - target.getY() <= 0.5)
-                robots.get(idxRobot).delFood();
+                robots.get(idxRobot).removeFood();
         }
     }
 
     public void update() {
-        if (!(robots != null && robots.keySet().size() != 0))
+        if (robots.keySet().size() == 0)
             return;
         //robots.removeIf(robot -> robot.getHunger() < 0);
         for (long idxRobot: robots.keySet()) {
@@ -47,7 +45,7 @@ public class GameObserver {
             if (robot.isAlive) {
 //                if (!robot.checkStart())
 //                    robot.start();
-                                robots.get(idxRobot).update();
+                robot.update();
             }
             else {
 //                robot.interrupt();
@@ -80,9 +78,6 @@ public class GameObserver {
     }
 
     public Food findClosedFoodToRobot(Robot robot) {
-        if (foods == null)
-            return null;
-
         double distance = Double.MAX_VALUE;
         Food nearestFood = null;
         for (Food food : foods.values()) {

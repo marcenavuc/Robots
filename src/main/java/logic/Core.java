@@ -1,11 +1,10 @@
 package logic;
 
 import utils.Position;
-import utils.Tuple;
 
 public class Core {
-    public static int widthField;
-    public static int heightField;
+    public static int mapWidth = 400;
+    public static int mapHeight = 400;
 
 
     public static double findDistance(double x1, double y1,
@@ -30,6 +29,10 @@ public class Core {
         double diffX = toX - fromX;
         double diffY = toY - fromY;
         return asNormalizedRadians(Math.atan2(diffY, diffX));
+    }
+
+    public static double angleTo(Position point1, Position point2) {
+        return angleTo(point1.getX(), point1.getY(), point2.getX(), point2.getY());
     }
 
     public static double applyLimits(double value, double min, double max) {
@@ -73,19 +76,19 @@ public class Core {
         angularVelocity = applyLimits(angularVelocity,
                 -robot.MAX_ANGULAR_VELOCITY, robot.MAX_ANGULAR_VELOCITY);
 
-        double newX = getNewCoordinates(robot.getRobotPositionD(), robotDirection,
+        double newX = getNewCoordinates(robot.getRobotPosition(), robotDirection,
                 velocity, angularVelocity, duration, true);
-        double newY = getNewCoordinates(robot.getRobotPositionD(), robotDirection,
+        double newY = getNewCoordinates(robot.getRobotPosition(), robotDirection,
                 velocity, angularVelocity, duration, false);
-        if (newX> widthField || newX < 0 || newY > heightField || newY < 0) {
+        if (newX> mapWidth || newX < 0 || newY > mapHeight || newY < 0) {
             double wallAngle = 0;
-            if (newX > widthField || newX < 0)
+            if (newX > mapWidth || newX < 0)
                 wallAngle = Math.PI / 2;
 
             robotDirection = wallAngle * 2 - robotDirection;
-            newX = getNewCoordinates(robot.getRobotPositionD(), robotDirection,
+            newX = getNewCoordinates(robot.getRobotPosition(), robotDirection,
                     velocity, angularVelocity, duration, true);
-            newY = getNewCoordinates(robot.getRobotPositionD(), robotDirection,
+            newY = getNewCoordinates(robot.getRobotPosition(), robotDirection,
                     velocity, angularVelocity, duration, false);
         } else
             robotDirection = asNormalizedRadians(robotDirection + angularVelocity * duration);
@@ -94,8 +97,8 @@ public class Core {
     }
 
     public static void setSize(int width, int height) {
-        widthField = width;
-        heightField = height;
+        mapWidth = width;
+        mapHeight = height;
     }
 
     public static int round(double value) {

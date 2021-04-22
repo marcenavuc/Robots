@@ -87,23 +87,23 @@ public class Robot /*implements Runnable*/ {
             return;
         }
 
-        double angleToTarget = angleTo(robotPosition.getX(), robotPosition.getY(),
-                targetPosition.getX(), targetPosition.getY());
+        moveToTarget();
+    }
+
+    private void moveToTarget() {
+        double angleToTarget = angleTo(robotPosition, targetPosition);
         double angularVelocity = 0;
-        if (angleToTarget > robotDirection)
-            angularVelocity = MAX_ANGULAR_VELOCITY;
+//        if (angleToTarget > robotDirection)
+//            angularVelocity = MAX_ANGULAR_VELOCITY;
+//
+//        if (angleToTarget < robotDirection)
+//            angularVelocity = -MAX_ANGULAR_VELOCITY;
 
-        if (angleToTarget < robotDirection)
-            angularVelocity = -MAX_ANGULAR_VELOCITY;
-
-        moveRobot(this, MAX_VELOCITY, angularVelocity, 10.0);
+//        moveRobot(this, MAX_VELOCITY, angularVelocity, 10.0);
+        moveRobot(this, MAX_VELOCITY, angleToTarget, 10.0);
     }
 
     public Position getRobotPosition() {
-        return new Position(round(this.robotPosition.getX()), round(this.robotPosition.getY()));
-    }
-
-    public Position getRobotPositionD() {
         return this.robotPosition;
     }
 
@@ -136,7 +136,7 @@ public class Robot /*implements Runnable*/ {
         }
     }
 
-    public void delFood() {
+    public void removeFood() {
         targetPosition = null;
         satiety = 0;
     }

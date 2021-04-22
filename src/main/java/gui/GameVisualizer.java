@@ -49,7 +49,6 @@ public class GameVisualizer extends JPanel {
                 repaint();
             }
         });
-        Core.setSize(getWidth(), getHeight());
         setDoubleBuffered(true);
     }
 

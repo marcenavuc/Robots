@@ -36,7 +36,7 @@ public class MainFrame extends JFrame {
         if (notLoad || loadWindowState(Const.mainFile, this) == null)
             setExtendedState(Frame.MAXIMIZED_BOTH);
 
-        gameObserver = new GameObserver();
+        gameObserver = new GameObserver(400, 400);
 
         InternalFrameAdapter adapter = new InternalFrameAdapter() {
             @Override

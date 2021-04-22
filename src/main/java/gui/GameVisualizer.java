@@ -2,7 +2,7 @@ package gui;
 
 import logic.*;
 import logic.Robot;
-import utils.MyMath;
+import logic.Core;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -49,7 +49,7 @@ public class GameVisualizer extends JPanel {
                 repaint();
             }
         });
-        MyMath.setSize(getWidth(), getHeight());
+        Core.setSize(getWidth(), getHeight());
         setDoubleBuffered(true);
     }
 
@@ -84,8 +84,8 @@ public class GameVisualizer extends JPanel {
     }
 
     private void drawRobot(Graphics2D g, Robot robot) {
-        int robotCenterX = robot.getRobotPosition().getKey();
-        int robotCenterY = robot.getRobotPosition().getValue();
+        int robotCenterX = (int) robot.getRobotPosition().getX();
+        int robotCenterY = (int) robot.getRobotPosition().getY();
         AffineTransform t = AffineTransform.getRotateInstance(
                 robot.getRobotDirection(), robotCenterX, robotCenterY);
         g.setTransform(t);

@@ -1,15 +1,17 @@
 package logic;
 
-import utils.MyMath;
+import utils.Position;
 import utils.Tuple;
 
 import java.util.Collection;
 import java.util.concurrent.*;
 
+import logic.Robot;
+
 public class GameObserver {
     private long counters;
     private final ConcurrentHashMap<Long, Robot> robots;
-    private final ConcurrentHashMap<Tuple<Integer, Integer>, Food> foods;
+    private final ConcurrentHashMap<Position, Food> foods;
 
 
     public GameObserver() {
@@ -26,12 +28,12 @@ public class GameObserver {
         robot.setFood(food);
     }
 
-    protected void deleteFoodFromMap(Tuple<Integer, Integer> target) {
+    protected void deleteFoodFromMap(Position target) {
         foods.keySet().remove(target);
         for (long idxRobot: robots.keySet()) {
-            Tuple<Integer, Integer> targetPos = robots.get(idxRobot).getTarget();
-            if (targetPos.getKey() - target.getKey() <= 0.5
-                && targetPos.getValue() - target.getValue() <= 0.5)
+            Position targetPos = robots.get(idxRobot).getTarget();
+            if (targetPos.getX() - target.getX() <= 0.5
+                && targetPos.getY() - target.getY() <= 0.5)
                 robots.get(idxRobot).delFood();
         }
     }
@@ -74,7 +76,7 @@ public class GameObserver {
     }
 
     public void updateSize(int width, int height) {
-        MyMath.setSize(width, height);
+        Core.setSize(width, height);
     }
 
     public Food findClosedFoodToRobot(Robot robot) {
@@ -85,9 +87,9 @@ public class GameObserver {
         Food nearestFood = null;
         for (Food food : foods.values()) {
 
-            double currentDistance = MyMath.findDistance(
-                    robot.getRobotPosition().getKey(),
-                    robot.getRobotPosition().getValue(),
+            double currentDistance = Core.findDistance(
+                    robot.getRobotPosition().getX(),
+                    robot.getRobotPosition().getY(),
                     food.getPositionX(),
                     food.getPositionY());
 

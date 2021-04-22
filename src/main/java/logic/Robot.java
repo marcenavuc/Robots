@@ -1,19 +1,20 @@
 package logic;
 
+import utils.Position;
 import utils.Tuple;
 
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static utils.MyMath.*;
+import static logic.Core.*;
 
 public class Robot /*implements Runnable*/ {
-    private volatile Tuple<Double, Double> robotPosition;
+    private volatile Position robotPosition;
     private volatile double robotDirection = 0;
     private GameObserver gameObserver;
 
-    private volatile Tuple<Integer, Integer> targetPosition;
+    private volatile Position targetPosition;
     private double satiety = 0;
     private volatile int hunger = 0;
 
@@ -51,11 +52,12 @@ public class Robot /*implements Runnable*/ {
     }
 
     public void setRobotPosition(double x, double y) {
-        this.robotPosition = new Tuple<>(x, y);
+        this.robotPosition = new Position(x, y);
     }
 
     private boolean canEat() {
-        return targetPosition != null && findDistance(targetPosition.getKey(), targetPosition.getValue(), robotPosition.getKey(), robotPosition.getValue()) < 0.5;
+        return targetPosition != null && findDistance(targetPosition.getX(), targetPosition.getY(),
+                robotPosition.getX(), robotPosition.getY()) < 0.5;
     }
 
     public void eat() {
@@ -85,7 +87,8 @@ public class Robot /*implements Runnable*/ {
             return;
         }
 
-        double angleToTarget = angleTo(robotPosition.getKey(), robotPosition.getValue(), targetPosition.getKey(), targetPosition.getValue());
+        double angleToTarget = angleTo(robotPosition.getX(), robotPosition.getY(),
+                targetPosition.getX(), targetPosition.getY());
         double angularVelocity = 0;
         if (angleToTarget > robotDirection)
             angularVelocity = MAX_ANGULAR_VELOCITY;
@@ -96,11 +99,11 @@ public class Robot /*implements Runnable*/ {
         moveRobot(this, MAX_VELOCITY, angularVelocity, 10.0);
     }
 
-    public Tuple<Integer, Integer> getRobotPosition() {
-        return new Tuple<>(round(this.robotPosition.getKey()), round(this.robotPosition.getValue()));
+    public Position getRobotPosition() {
+        return new Position(round(this.robotPosition.getX()), round(this.robotPosition.getY()));
     }
 
-    public Tuple<Double, Double> getRobotPositionD() {
+    public Position getRobotPositionD() {
         return this.robotPosition;
     }
 
@@ -112,7 +115,7 @@ public class Robot /*implements Runnable*/ {
         return this.robotDirection;
     }
 
-    public Tuple<Integer, Integer> getTarget() {
+    public Position getTarget() {
         return targetPosition;
     }
 

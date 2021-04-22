@@ -1,8 +1,9 @@
-package utils;
+package logic;
 
-import logic.Robot;
+import utils.Position;
+import utils.Tuple;
 
-public class MyMath {
+public class Core {
     public static int widthField;
     public static int heightField;
 
@@ -38,26 +39,26 @@ public class MyMath {
         return Math.min(value, max);
     }
 
-    public static double getNewCoordinates(Tuple<Double, Double> robotPosition,
-                                     double robotDirection,
-                                     double velocity,
-                                     double angularVelocity,
-                                     double duration, boolean x) {
+    public static double getNewCoordinates(Position robotPosition,
+                                           double robotDirection,
+                                           double velocity,
+                                           double angularVelocity,
+                                           double duration, boolean x) {
         if (x) {
-            double newX = robotPosition.getKey() + velocity / angularVelocity *
+            double newX = robotPosition.getX() + velocity / angularVelocity *
                     (Math.sin(robotDirection  + angularVelocity * duration) -
                             Math.sin(robotDirection));
             if (!Double.isFinite(newX))
-                newX = robotPosition.getKey()
+                newX = robotPosition.getX()
                         + velocity * duration * Math.cos(robotDirection);
 
             return newX;
         }
-        double newY = robotPosition.getValue() - velocity / angularVelocity *
+        double newY = robotPosition.getY() - velocity / angularVelocity *
                 (Math.cos(robotDirection  + angularVelocity * duration) -
                         Math.cos(robotDirection));
         if (!Double.isFinite(newY))
-            newY = robotPosition.getValue()
+            newY = robotPosition.getY()
                     + velocity * duration * Math.sin(robotDirection);
 
         return newY;

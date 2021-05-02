@@ -13,5 +13,7 @@ public class Info implements Serializable {
     public boolean isMinimized;
     public boolean isMaximized;
 
+    public String locale;
+
     public Info() {}
 }

@@ -5,6 +5,8 @@ import utils.Tuple;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static utils.MyMath.*;
 
@@ -24,6 +26,8 @@ public class Robot /*implements Runnable*/ {
     public boolean isAlive;
 //    private final Thread thread;
     private Timer timer;
+    public static Lock lock = new ReentrantLock();
+    public boolean isPainted = false;
 
 
     public Robot(double robotPositionX, double robotPositionY) {
@@ -137,11 +141,14 @@ public class Robot /*implements Runnable*/ {
         targetPosition = null;
         satiety = 0;
     }
-//
+
 //    @Override
 //    public void run() {
-//        while (isAlive)
-//            update();
+//            while (isAlive) {
+//                isPainted = false;
+//                update();
+//                lock.lock();
+//            }
 //    }
 
     private class CheckAliveRobot extends TimerTask {

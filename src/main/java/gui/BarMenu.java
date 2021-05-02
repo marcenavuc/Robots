@@ -22,33 +22,40 @@ public class BarMenu {
     }
 
     private JMenu createMainMenu(AckFrame ackFrame) {
-        return createMenu("Меню", KeyEvent.VK_Q, "Главное меню",
-                createItem("Выход", 0, (event) -> {
-            if (ackFrame.ack("Закрыть окно?") == 0) {
+        return createMenu(mainFrame.getBundle().getString("bar.menu"), KeyEvent.VK_Q,
+                mainFrame.getBundle().getString("bar.main.menu"),
+                Arrays.asList(createItem(mainFrame.getBundle().getString("bar.main.exit"), 0, (event) -> {
+            if (ackFrame.ackExit(mainFrame.getBundle().getString("bar.main.close"), mainFrame.getBundle()) == 0) {
                 mainFrame.unregister();
                 System.exit(0);
             }
-        }));
+        }), createItem(mainFrame.getBundle().getString("bar.main.change.lan"), 0, (event) -> {
+                    String lan = ackFrame.ackLanguage("", mainFrame.languages, mainFrame.getBundle());
+                    Locale locale = Locale.forLanguageTag(lan);
+                    mainFrame.changeLocale(locale);
+                    })));
+
     }
 
     private JMenu createLookAndFeelMenu() {
-        return createMenu("Режим отображения", KeyEvent.VK_V,
-                "Управление режимом отображения приложения",
-                Arrays.asList(createItem("Системная схема",
+        return createMenu(mainFrame.getBundle().getString("bar.display.name"), KeyEvent.VK_V,
+                mainFrame.getBundle().getString("bar.display.manage"),
+                Arrays.asList(createItem(mainFrame.getBundle().getString("bar.display.scheme.system"),
                         KeyEvent.VK_S, (event) -> {
             setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             mainFrame.invalidate();
-        }), createItem("Универсальная схема", KeyEvent.VK_S, (event) -> {
+        }), createItem(mainFrame.getBundle().getString("bar.display.scheme.universal"),
+                        KeyEvent.VK_S, (event) -> {
             setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
             mainFrame.invalidate();
         })));
     }
 
     private JMenu createTestMenu() {
-        return createMenu("Тесты",
-                KeyEvent.VK_T, "Тестовые команды",
-                createItem("Сообщение в лог",
-                        KeyEvent.VK_S, (event) -> Logger.debug("Новая строка")));
+        return createMenu(mainFrame.getBundle().getString("bar.test.name"),
+                KeyEvent.VK_T, mainFrame.getBundle().getString("bar.test.description"),
+                createItem(mainFrame.getBundle().getString("bar.test.text"),
+                        KeyEvent.VK_S, (event) -> Logger.debug(mainFrame.getBundle().getString("bar.test.message"))));
     }
 
     private void setLookAndFeel(String className) {

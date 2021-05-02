@@ -97,6 +97,7 @@ public class GameVisualizer extends JPanel {
         fillOval(g, robotCenterX  + 10, robotCenterY, 5, 5);
         g.setColor(Color.BLACK);
         drawOval(g, robotCenterX  + 10, robotCenterY, 5, 5);
+        //robot.lock.unlock();
     }
 
     private void drawFood(Graphics2D g, Food food) {

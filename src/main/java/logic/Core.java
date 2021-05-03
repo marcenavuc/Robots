@@ -1,11 +1,23 @@
 package utils;
 
+import logic.Food;
 import logic.Robot;
 
 public class Core {
     public static int widthField;
     public static int heightField;
 
+    public static double findDistance(Robot robot, Food food) {
+        double distance = findDistance(robot.getRobotPosition().getKey(),
+                                       robot.getRobotPosition().getValue(),
+                                       food.getPositionX(),
+                                       food.getPositionY());
+        double angle = angleTo(robot.getRobotPosition().getKey(),
+                               robot.getRobotPosition().getValue(),
+                               food.getPositionX(),
+                               food.getPositionY());
+        return angle * distance;
+    }
 
     public static double findDistance(double x1, double y1,
                                    double x2, double y2) {
@@ -63,10 +75,10 @@ public class Core {
         return newY;
     }
 
-    public static void moveRobot(Robot robot,
-                           double velocity,
-                           double angularVelocity,
-                           double duration) {
+    public static Tuple<Tuple<Double, Double>, Double> calculateNewCords(Robot robot,
+                                         double velocity,
+                                         double angularVelocity,
+                                         double duration) {
         double robotDirection = robot.getRobotDirection();
         velocity = applyLimits(velocity, 0, robot.MAX_VELOCITY);
         angularVelocity = applyLimits(angularVelocity,
@@ -88,6 +100,21 @@ public class Core {
                     velocity, angularVelocity, duration, false);
         } else
             robotDirection = asNormalizedRadians(robotDirection + angularVelocity * duration);
+        return new Tuple<>(new Tuple<>(newX, newY), robotDirection);
+    }
+
+    public static void moveRobot(Robot robot,
+                           double velocity,
+                           double angularVelocity,
+                           double duration) {
+
+        Tuple<Tuple<Double, Double>, Double> args = calculateNewCords(robot,
+                velocity, angularVelocity, duration);
+
+        double newX = args.getKey().getKey();
+        double newY = args.getKey().getValue();
+        double robotDirection = args.getValue();
+
         robot.setRobotPosition(newX, newY);
         robot.setRobotDirection(robotDirection);
     }

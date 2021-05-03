@@ -11,7 +11,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static utils.Core.*;
 
-public class Robot implements Observable {
+public class Robot implements Observable, Runnable {
     private java.util.List<Observer> listObservers;
     private volatile Tuple<Double, Double> robotPosition;
     private volatile double robotDirection = 0;
@@ -148,14 +148,15 @@ public class Robot implements Observable {
         satiety = 0;
     }
 
-//    @Override
-//    public void run() {
-//            while (isAlive) {
-//                isPainted = false;
-//                update();
-//                lock.lock();
-//            }
-//    }
+    @Override
+    public void run() {
+//        while (isAlive) {
+//            isPainted = false;
+//            update();
+//            lock.lock();
+//        }
+        update();
+    }
 
     private class CheckAliveRobot extends TimerTask {
         public void run() {

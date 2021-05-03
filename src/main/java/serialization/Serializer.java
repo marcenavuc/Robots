@@ -23,7 +23,7 @@ public class Serializer {
         serialize(info, name);
     }
 
-    public static void saveWindowState1(MainFrame frame, String name) {
+    public static void saveWindowState(MainFrame frame, String name) {
         Info info = new Info();
         info.height = frame.getHeight();
         info.width = frame.getWidth();

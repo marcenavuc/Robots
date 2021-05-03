@@ -25,7 +25,6 @@ public class LogFrame extends JInternalFrame implements LogChangeListener {
         getContentPane().add(panel);
         pack();
         updateLogContent();
-
     }
 
     private void updateLogContent() {

@@ -3,6 +3,7 @@ package gui;
 import gui.windows.*;
 import log.Logger;
 import logic.GameObserver;
+import serialization.Serializer;
 import utils.Const;
 
 import javax.swing.*;
@@ -22,6 +23,7 @@ public class MainFrame extends JFrame {
     protected ResourceBundle bundle;
     public GameFrame gameFrame;
     public LogFrame logFrame;
+    public ObserverFrame observerFrame;
     public GameObserver gameObserver;
     public final String[] languages;
     AckFrame ackFrame;
@@ -42,8 +44,6 @@ public class MainFrame extends JFrame {
         if (notLoad || loadWindowState(Const.mainFile, this) == null)
             setExtendedState(Frame.MAXIMIZED_BOTH);
 
-        gameObserver = new GameObserver();
-
         InternalFrameAdapter adapter = new InternalFrameAdapter() {
             @Override
             public void internalFrameClosing(InternalFrameEvent event) {
@@ -54,6 +54,11 @@ public class MainFrame extends JFrame {
                 }
             }
         };
+
+        observerFrame = createObserverWindow();
+        observerFrame.addInternalFrameListener(adapter);
+        addWindow(observerFrame);
+        gameObserver = new GameObserver(observerFrame);
 
         logFrame = createLogWindow();
         logFrame.addInternalFrameListener(adapter);
@@ -74,7 +79,8 @@ public class MainFrame extends JFrame {
                 if (ackFrame.ackExit(bundle.getString("bar.main.close"), bundle) == 0) {
                     saveWindowState(gameFrame, Const.gameFile);
                     saveWindowState(logFrame, Const.logFile);
-                    saveWindowState1(temp, Const.mainFile);
+                    saveWindowState(observerFrame, Const.observerFile);
+                    Serializer.saveWindowState(temp, Const.mainFile);
                     System.exit(0);
                 }
             }
@@ -94,6 +100,7 @@ public class MainFrame extends JFrame {
                 gameObserver.updateSize(gameFrame.getWidth(), gameFrame.getHeight());
             }
         });
+        gameFrame.updateSize();
         return gameFrame;
     }
 
@@ -107,6 +114,14 @@ public class MainFrame extends JFrame {
         logFrame.pack();
         Logger.debug(bundle.getString("log.message"));
         return logFrame;
+    }
+
+    protected ObserverFrame createObserverWindow() throws PropertyVetoException {
+        ObserverFrame observerFrame = new ObserverFrame(bundle.getLocale());
+        if (notLoad || loadWindowState(Const.observerFile, observerFrame) == null) {
+            observerFrame.setSize(200, 100);
+        }
+        return observerFrame;
     }
 
     private int addOptionPane(InternalFrameEvent event) {
@@ -140,6 +155,7 @@ public class MainFrame extends JFrame {
         setJMenuBar(barMenu.generateMenuBar(ackFrame));
         logFrame.changeLocale(locale);
         gameFrame.changeLocale(locale);
+        observerFrame.changeLocale(locale);
     }
 
     public void setLocale(Locale locale) {

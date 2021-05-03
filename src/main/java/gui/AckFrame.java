@@ -31,13 +31,21 @@ public class AckFrame extends JFrame {
         return answer;
     }
 
-    public String ackLanguage(String text, String[] languages, ResourceBundle bundle){
+    public String ackLanguage(String text, String[] languages, String keyQuestion, ResourceBundle bundle){
         setVisible(true);
         setSize(100, 50);
-        String answer = (String)JOptionPane.showInputDialog(this, text,
-                bundle.getString("bar.main.change.lan"),
+        String answer = "-1";
+        if (languages.length != 0)
+            answer = (String)JOptionPane.showInputDialog(this, text,
+                bundle.getString(keyQuestion),
                 JOptionPane.QUESTION_MESSAGE, null,
                 languages, languages[0]);
+        else
+            JOptionPane.showInputDialog(this, text,
+                    bundle.getString(keyQuestion),
+                    JOptionPane.QUESTION_MESSAGE, null,
+                    new Object[] {}, "");
+
         setVisible(false);
         setSize(0, 0);
         return answer;

@@ -20,6 +20,7 @@ public class GameVisualizer extends JPanel {
     }
 
     public GameVisualizer(GameObserver gameObserver) {
+        MyMath.setSize(getWidth(), getHeight());
         this.gameObserver = gameObserver;
         Timer timer = initTimer();
         timer.schedule(new TimerTask() {
@@ -38,18 +39,14 @@ public class GameVisualizer extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int button = e.getButton();
-                if (button == 1) {
-                    Robot robot = new Robot(e.getX(), e.getY());
-                    gameObserver.addRobot(robot);
-                }
-                if (button == 3) {
-                    Food food = new Food(e.getX(), e.getY(), 1);
-                    gameObserver.addFood(food);
-                }
+                if (button == 1)
+                    gameObserver.addRobot(e.getX(), e.getY());
+                if (button == 3)
+                    gameObserver.addFood(e.getX(), e.getY());
+
                 repaint();
             }
         });
-        MyMath.setSize(getWidth(), getHeight());
         setDoubleBuffered(true);
     }
 

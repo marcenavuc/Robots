@@ -3,6 +3,7 @@ package logic;
 import utils.Tuple;
 
 
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.locks.Lock;
@@ -10,7 +11,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static utils.MyMath.*;
 
-public class Robot /*implements Runnable*/ {
+public class Robot implements Observable {
+    private java.util.List<Observer> listObservers;
     private volatile Tuple<Double, Double> robotPosition;
     private volatile double robotDirection = 0;
     private GameObserver gameObserver;
@@ -21,21 +23,25 @@ public class Robot /*implements Runnable*/ {
 
     public final double MAX_VELOCITY = 0.1;
     public final double MAX_ANGULAR_VELOCITY = 0.001;
-    private final long MAX_LIVE_WITHOUT_FOOD = 1000 * 5;
+    private final long MAX_LIVE_WITHOUT_FOOD = 1000 * 20;
 
     public boolean isAlive;
 //    private final Thread thread;
     private Timer timer;
     public static Lock lock = new ReentrantLock();
     public boolean isPainted = false;
+    private final long id;
 
 
-    public Robot(double robotPositionX, double robotPositionY) {
+    public Robot(double robotPositionX, double robotPositionY, long id) {
+        this.id = id;
+        listObservers = new ArrayList<>();
         setRobotPosition(robotPositionX, robotPositionY);
 //        thread = new Thread(this);
 //        thread.setDaemon(true);
         isAlive = true;
         initTimer();
+
     }
 
 //    public void start() {
@@ -56,6 +62,11 @@ public class Robot /*implements Runnable*/ {
 
     public void setRobotPosition(double x, double y) {
         this.robotPosition = new Tuple<>(x, y);
+        notifyObservers();
+    }
+
+    public void setRobotDirection(double value) {
+        this.robotDirection = value;
     }
 
     private boolean canEat() {
@@ -96,7 +107,6 @@ public class Robot /*implements Runnable*/ {
 
         if (angleToTarget < robotDirection)
             angularVelocity = -MAX_ANGULAR_VELOCITY;
-
         moveRobot(this, MAX_VELOCITY, angularVelocity, 10.0);
     }
 
@@ -106,10 +116,6 @@ public class Robot /*implements Runnable*/ {
 
     public Tuple<Double, Double> getRobotPositionD() {
         return this.robotPosition;
-    }
-
-    public void setRobotDirection(double value) {
-        this.robotDirection = value;
     }
 
     public double getRobotDirection() {
@@ -169,5 +175,26 @@ public class Robot /*implements Runnable*/ {
         timer.scheduleAtFixedRate (new CheckAliveRobot(),
                 MAX_LIVE_WITHOUT_FOOD + 1000,
                 MAX_LIVE_WITHOUT_FOOD);
+    }
+
+    @Override
+    public void removeObserver(Observer o)
+    {
+        listObservers.remove(o);
+    }
+    @Override
+    public void registerObserver(Observer o) {
+        listObservers.add(o);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (Observer observer : listObservers) {
+            observer.update(robotPosition, robotDirection, targetPosition, id);
+        }
+    }
+
+    public long getId() {
+        return id;
     }
 }

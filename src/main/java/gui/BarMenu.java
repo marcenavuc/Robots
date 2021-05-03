@@ -30,7 +30,7 @@ public class BarMenu {
                 System.exit(0);
             }
         }), createItem(mainFrame.getBundle().getString("bar.main.change.lan"), 0, (event) -> {
-                    String lan = ackFrame.ackLanguage("", mainFrame.languages, mainFrame.getBundle());
+                    String lan = ackFrame.ackLanguage("", mainFrame.languages, "bar.main.change.lan", mainFrame.getBundle());
                     Locale locale = Locale.forLanguageTag(lan);
                     mainFrame.changeLocale(locale);
                     })));

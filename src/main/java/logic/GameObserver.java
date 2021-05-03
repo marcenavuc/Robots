@@ -1,5 +1,6 @@
 package logic;
 
+import gui.windows.ObserverFrame;
 import utils.MyMath;
 import utils.Tuple;
 
@@ -10,9 +11,11 @@ public class GameObserver {
     private long counters;
     private final ConcurrentHashMap<Long, Robot> robots;
     private final ConcurrentHashMap<Tuple<Integer, Integer>, Food> foods;
+    private ObserverFrame observerFrame;
 
 
-    public GameObserver() {
+    public GameObserver(ObserverFrame observerFrame) {
+        this.observerFrame = observerFrame;
         robots = new ConcurrentHashMap<>();
         foods = new ConcurrentHashMap<>();
         //initTimer();
@@ -49,6 +52,7 @@ public class GameObserver {
             }
             else {
 //                robot.interrupt();
+                observerFrame.delRobot(robot.getId());
                 robots.remove(idxRobot);
             }
         }
@@ -62,14 +66,17 @@ public class GameObserver {
         return robots.values();
     }
 
-    public void addFood(Food food) {
+    public void addFood(int x, int y) {
+        Food food = new Food(x, y, 1);
         foods.put(food.getPosition(), food);
         updateDirectionsToFood();
     }
 
-    public void addRobot(Robot robot) {
+    public void addRobot(int x, int y) {
+        Robot robot = new Robot(x, y, counters++);
+        observerFrame.addRobot(robot);
         robot.addObserver(this);
-        robots.put(counters++, robot);
+        robots.put(robot.getId(), robot);
         updateDirectionsToFood();
     }
 

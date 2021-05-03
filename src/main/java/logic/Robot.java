@@ -9,7 +9,7 @@ import java.util.TimerTask;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static utils.MyMath.*;
+import static utils.Core.*;
 
 public class Robot implements Observable {
     private java.util.List<Observer> listObservers;

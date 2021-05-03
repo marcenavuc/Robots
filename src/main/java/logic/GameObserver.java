@@ -1,7 +1,7 @@
 package logic;
 
 import gui.windows.ObserverFrame;
-import utils.MyMath;
+import utils.Core;
 import utils.Tuple;
 
 import java.util.Collection;
@@ -81,7 +81,7 @@ public class GameObserver {
     }
 
     public void updateSize(int width, int height) {
-        MyMath.setSize(width, height);
+        Core.setSize(width, height);
     }
 
     public Food findClosedFoodToRobot(Robot robot) {
@@ -92,7 +92,7 @@ public class GameObserver {
         Food nearestFood = null;
         for (Food food : foods.values()) {
 
-            double currentDistance = MyMath.findDistance(
+            double currentDistance = Core.findDistance(
                     robot.getRobotPosition().getKey(),
                     robot.getRobotPosition().getValue(),
                     food.getPositionX(),

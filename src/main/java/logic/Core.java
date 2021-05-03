@@ -2,7 +2,7 @@ package utils;
 
 import logic.Robot;
 
-public class MyMath {
+public class Core {
     public static int widthField;
     public static int heightField;
 

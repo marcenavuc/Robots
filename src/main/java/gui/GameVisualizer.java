@@ -2,7 +2,7 @@ package gui;
 
 import logic.*;
 import logic.Robot;
-import utils.MyMath;
+import utils.Core;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -20,7 +20,7 @@ public class GameVisualizer extends JPanel {
     }
 
     public GameVisualizer(GameObserver gameObserver) {
-        MyMath.setSize(getWidth(), getHeight());
+        Core.setSize(getWidth(), getHeight());
         this.gameObserver = gameObserver;
         Timer timer = initTimer();
         timer.schedule(new TimerTask() {

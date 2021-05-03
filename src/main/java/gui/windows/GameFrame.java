@@ -2,6 +2,7 @@ package gui.windows;
 
 import gui.GameVisualizer;
 import logic.GameObserver;
+import utils.MyMath;
 
 import java.awt.*;
 import java.util.Locale;
@@ -23,7 +24,8 @@ public class GameFrame extends JInternalFrame {
     }
 
     public void updateSize() {
-        gameVisualizer.setSize(getWidth(), getHeight());
+        MyMath.setSize(getWidth(), getHeight());
+        //gameVisualizer.setSize();
     }
 
     public void changeLocale(Locale locale) {

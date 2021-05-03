@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.beans.PropertyVetoException;
 import java.io.File;
 import java.util.Arrays;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import static utils.Const.*;
 
@@ -22,12 +24,13 @@ public class RobotsProgram {
             boolean notLoad = true;
 
             if (checkExistFile("")) {
+                ResourceBundle tempBundle = ResourceBundle.getBundle(baseNameBundle, Locale.getDefault());
                 AckFrame ackFrame = new AckFrame();
-                notLoad = ackFrame.ack("Загрузить последнее состояние окна?") != 0;
+                notLoad = ackFrame.ackExit(tempBundle.getString("ack.load"), tempBundle) != 0;
                 ackFrame.dispose();
             }
             try {
-                new MainFrame(notLoad);
+                new MainFrame(notLoad, new String[] { "ru", "en" });
             }
             catch (PropertyVetoException e) {
                 e.printStackTrace();

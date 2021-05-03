@@ -2,16 +2,34 @@ package gui.windows;
 
 import gui.GameVisualizer;
 import logic.GameObserver;
+import utils.MyMath;
 
 import java.awt.*;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import javax.swing.*;
 
+import static utils.Const.baseNameBundle;
+
 public class GameFrame extends JInternalFrame {
-    public GameFrame(GameObserver gameObserver) {
-        super("Игровое поле", true, true, true, true);
+    private GameVisualizer gameVisualizer;
+    public GameFrame(GameObserver gameObserver, Locale locale) {
+        super(ResourceBundle.getBundle(baseNameBundle, locale)
+                .getString("frame.game"), true, true, true, true);
         JPanel panel = new JPanel(new BorderLayout());
-        panel.add(new GameVisualizer(gameObserver), BorderLayout.CENTER);
+        gameVisualizer = new GameVisualizer(gameObserver);
+        panel.add(gameVisualizer, BorderLayout.CENTER);
         getContentPane().add(panel);
         pack();
+    }
+
+    public void updateSize() {
+        MyMath.setSize(getWidth(), getHeight());
+        //gameVisualizer.setSize();
+    }
+
+    public void changeLocale(Locale locale) {
+        super.setTitle(ResourceBundle.getBundle(baseNameBundle, locale)
+                .getString("frame.game"));
     }
 }

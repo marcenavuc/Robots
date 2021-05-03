@@ -1,6 +1,5 @@
 package logic;
 
-import utils.Position;
 import utils.Tuple;
 
 public class Food {
@@ -15,6 +14,15 @@ public class Food {
         this.satiety = satiety;
     }
 
+//    public void setPosition(int x, int y) {
+//        positionX = x;
+//        positionY = y;
+//    }
+//
+//    public void setSatiety(double satiety) {
+//        this.satiety = satiety;
+//    }
+
     public int getPositionX() {
         return positionX;
     }
@@ -27,7 +35,7 @@ public class Food {
         return satiety;
     }
 
-    public Position getPosition() {
-        return new Position(positionX, positionY);
+    public Tuple<Integer, Integer> getPosition() {
+        return new Tuple<>(positionX, positionY);
     }
 }

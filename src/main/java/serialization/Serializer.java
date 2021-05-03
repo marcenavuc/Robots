@@ -7,6 +7,7 @@ import logic.Robot;
 import java.awt.*;
 import java.beans.PropertyVetoException;
 import java.io.*;
+import java.util.Locale;
 
 import javax.swing.*;
 
@@ -22,12 +23,13 @@ public class Serializer {
         serialize(info, name);
     }
 
-    public static void saveWindowState(JFrame frame, String name) {
+    public static void saveWindowState(MainFrame frame, String name) {
         Info info = new Info();
         info.height = frame.getHeight();
         info.width = frame.getWidth();
         info.xPosition = frame.getX();
         info.yPosition = frame.getY();
+        info.locale = frame.getBundle().getLocale().toString();
         serialize(info, name);
     }
 
@@ -70,13 +72,12 @@ public class Serializer {
         return info != null ? frame : null;
     }
 
-    public static JFrame loadWindowState(String name, JFrame frame) {
+    public static MainFrame loadWindowState(String name, MainFrame frame) {
         Info info = deserialize(name);
         if (info != null) {
-            if (frame instanceof MainFrame){
                 frame.setLocation(info.xPosition, info.yPosition);
                 frame.setPreferredSize(new Dimension(info.width, info.height));
-            }
+                frame.setLocale(Locale.forLanguageTag(info.locale));
         }
         return info != null ? frame : null;
     }

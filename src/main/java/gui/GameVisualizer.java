@@ -2,7 +2,7 @@ package gui;
 
 import logic.*;
 import logic.Robot;
-import logic.Core;
+import utils.MyMath;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -20,6 +20,7 @@ public class GameVisualizer extends JPanel {
     }
 
     public GameVisualizer(GameObserver gameObserver) {
+        MyMath.setSize(getWidth(), getHeight());
         this.gameObserver = gameObserver;
         Timer timer = initTimer();
         timer.schedule(new TimerTask() {
@@ -38,14 +39,11 @@ public class GameVisualizer extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int button = e.getButton();
-                if (button == 1) {
-                    Robot robot = new Robot(e.getX(), e.getY());
-                    gameObserver.addRobot(robot);
-                }
-                if (button == 3) {
-                    Food food = new Food(e.getX(), e.getY(), 1);
-                    gameObserver.addFood(food);
-                }
+                if (button == 1)
+                    gameObserver.addRobot(e.getX(), e.getY());
+                if (button == 3)
+                    gameObserver.addFood(e.getX(), e.getY());
+
                 repaint();
             }
         });
@@ -83,8 +81,8 @@ public class GameVisualizer extends JPanel {
     }
 
     private void drawRobot(Graphics2D g, Robot robot) {
-        int robotCenterX = (int) robot.getRobotPosition().getX();
-        int robotCenterY = (int) robot.getRobotPosition().getY();
+        int robotCenterX = robot.getRobotPosition().getKey();
+        int robotCenterY = robot.getRobotPosition().getValue();
         AffineTransform t = AffineTransform.getRotateInstance(
                 robot.getRobotDirection(), robotCenterX, robotCenterY);
         g.setTransform(t);
@@ -96,6 +94,7 @@ public class GameVisualizer extends JPanel {
         fillOval(g, robotCenterX  + 10, robotCenterY, 5, 5);
         g.setColor(Color.BLACK);
         drawOval(g, robotCenterX  + 10, robotCenterY, 5, 5);
+        //robot.lock.unlock();
     }
 
     private void drawFood(Graphics2D g, Food food) {

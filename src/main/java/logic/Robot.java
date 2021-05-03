@@ -1,38 +1,47 @@
 package logic;
 
-import utils.Position;
 import utils.Tuple;
 
 
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
-import static logic.Core.*;
+import static utils.MyMath.*;
 
-public class Robot /*implements Runnable*/ {
-    private volatile Position robotPosition;
+public class Robot implements Observable {
+    private java.util.List<Observer> listObservers;
+    private volatile Tuple<Double, Double> robotPosition;
     private volatile double robotDirection = 0;
     private GameObserver gameObserver;
 
-    private volatile Position targetPosition;
+    private volatile Tuple<Integer, Integer> targetPosition;
     private double satiety = 0;
     private volatile int hunger = 0;
 
     public final double MAX_VELOCITY = 0.1;
     public final double MAX_ANGULAR_VELOCITY = 0.001;
-    private final long MAX_LIVE_WITHOUT_FOOD = 1000 * 5;
+    private final long MAX_LIVE_WITHOUT_FOOD = 1000 * 20;
 
     public boolean isAlive;
 //    private final Thread thread;
     private Timer timer;
+    public static Lock lock = new ReentrantLock();
+    public boolean isPainted = false;
+    private final long id;
 
 
-    public Robot(double robotPositionX, double robotPositionY) {
+    public Robot(double robotPositionX, double robotPositionY, long id) {
+        this.id = id;
+        listObservers = new ArrayList<>();
         setRobotPosition(robotPositionX, robotPositionY);
 //        thread = new Thread(this);
 //        thread.setDaemon(true);
         isAlive = true;
         initTimer();
+
     }
 
 //    public void start() {
@@ -52,12 +61,16 @@ public class Robot /*implements Runnable*/ {
     }
 
     public void setRobotPosition(double x, double y) {
-        this.robotPosition = new Position(x, y);
+        this.robotPosition = new Tuple<>(x, y);
+        notifyObservers();
+    }
+
+    public void setRobotDirection(double value) {
+        this.robotDirection = value;
     }
 
     private boolean canEat() {
-        return targetPosition != null && findDistance(targetPosition.getX(), targetPosition.getY(),
-                robotPosition.getX(), robotPosition.getY()) < 0.5;
+        return targetPosition != null && findDistance(targetPosition.getKey(), targetPosition.getValue(), robotPosition.getKey(), robotPosition.getValue()) < 0.5;
     }
 
     public void eat() {
@@ -87,35 +100,29 @@ public class Robot /*implements Runnable*/ {
             return;
         }
 
-        moveToTarget();
-    }
-
-    private void moveToTarget() {
-        double angleToTarget = angleTo(robotPosition, targetPosition);
+        double angleToTarget = angleTo(robotPosition.getKey(), robotPosition.getValue(), targetPosition.getKey(), targetPosition.getValue());
         double angularVelocity = 0;
-//        if (angleToTarget > robotDirection)
-//            angularVelocity = MAX_ANGULAR_VELOCITY;
-//
-//        if (angleToTarget < robotDirection)
-//            angularVelocity = -MAX_ANGULAR_VELOCITY;
+        if (angleToTarget > robotDirection)
+            angularVelocity = MAX_ANGULAR_VELOCITY;
 
-//        moveRobot(this, MAX_VELOCITY, angularVelocity, 10.0);
-        moveRobot(this, MAX_VELOCITY, angleToTarget, 10.0);
+        if (angleToTarget < robotDirection)
+            angularVelocity = -MAX_ANGULAR_VELOCITY;
+        moveRobot(this, MAX_VELOCITY, angularVelocity, 10.0);
     }
 
-    public Position getRobotPosition() {
+    public Tuple<Integer, Integer> getRobotPosition() {
+        return new Tuple<>(round(this.robotPosition.getKey()), round(this.robotPosition.getValue()));
+    }
+
+    public Tuple<Double, Double> getRobotPositionD() {
         return this.robotPosition;
-    }
-
-    public void setRobotDirection(double value) {
-        this.robotDirection = value;
     }
 
     public double getRobotDirection() {
         return this.robotDirection;
     }
 
-    public Position getTarget() {
+    public Tuple<Integer, Integer> getTarget() {
         return targetPosition;
     }
 
@@ -136,15 +143,18 @@ public class Robot /*implements Runnable*/ {
         }
     }
 
-    public void removeFood() {
+    public void delFood() {
         targetPosition = null;
         satiety = 0;
     }
-//
+
 //    @Override
 //    public void run() {
-//        while (isAlive)
-//            update();
+//            while (isAlive) {
+//                isPainted = false;
+//                update();
+//                lock.lock();
+//            }
 //    }
 
     private class CheckAliveRobot extends TimerTask {
@@ -165,5 +175,26 @@ public class Robot /*implements Runnable*/ {
         timer.scheduleAtFixedRate (new CheckAliveRobot(),
                 MAX_LIVE_WITHOUT_FOOD + 1000,
                 MAX_LIVE_WITHOUT_FOOD);
+    }
+
+    @Override
+    public void removeObserver(Observer o)
+    {
+        listObservers.remove(o);
+    }
+    @Override
+    public void registerObserver(Observer o) {
+        listObservers.add(o);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (Observer observer : listObservers) {
+            observer.update(robotPosition, robotDirection, targetPosition, id);
+        }
+    }
+
+    public long getId() {
+        return id;
     }
 }

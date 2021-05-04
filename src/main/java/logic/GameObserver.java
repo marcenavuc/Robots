@@ -3,6 +3,7 @@ package logic;
 import gui.windows.ObserverFrame;
 import utils.Tuple;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.*;
 
@@ -12,6 +13,7 @@ public class GameObserver {
     private final ConcurrentHashMap<Tuple<Integer, Integer>, Food> foods;
     private final ObserverFrame observerFrame;
     private final ThreadPoolExecutor executor;
+    private final Collection<Future<?>> futures = new ArrayList<Future<?>>();
 
     public double MAX_VELOCITY = 0.1;
     public double MAX_ANGULAR_VELOCITY = 0.001;
@@ -46,11 +48,22 @@ public class GameObserver {
         for (long idxRobot: robots.keySet()) {
             Robot robot = robots.get(idxRobot);
             if (robot.isAlive) {
-                executor.submit(robot);
+                futures.add(executor.submit(robot));
             }
             else {
                 observerFrame.delRobot(robot.getId());
                 robots.remove(idxRobot);
+            }
+            waitAllTasksComplete();
+        }
+    }
+
+    private void waitAllTasksComplete() {
+        for (Future<?> future:futures) {
+            try {
+                future.get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
             }
         }
     }

@@ -18,6 +18,7 @@ public class ObserverFrame extends JInternalFrame implements Observer {
     ResourceBundle bundle;
     private long currentRobot = -1;
     private final CopyOnWriteArraySet<Long> robotsId;
+    JButton temp;
 
     public ObserverFrame(Locale locale) {
         super(ResourceBundle.getBundle(baseNameBundle, locale)
@@ -27,7 +28,7 @@ public class ObserverFrame extends JInternalFrame implements Observer {
         JPanel panel = new JPanel(new GridLayout(2, 1));
         label = new JLabel(bundle.getString("frame.coord.add"), JLabel.LEFT);
         panel.add(label);
-        JButton temp = new JButton(bundle.getString("frame.coord.change.button"));
+        temp = new JButton(bundle.getString("frame.coord.change.button"));
         temp.addActionListener(actionEvent -> currentRobot = Long.parseLong((new AckFrame())
                 .ackLanguage(
                     "", getIdRobots(),
@@ -55,6 +56,7 @@ public class ObserverFrame extends JInternalFrame implements Observer {
     public void changeLocale(Locale locale) {
         bundle = ResourceBundle.getBundle(baseNameBundle, locale);
         super.setTitle(bundle.getString("frame.coord.name"));
+        temp.setText(bundle.getString("frame.coord.change.button"));
     }
 
     public void addRobot(Robot robot) {

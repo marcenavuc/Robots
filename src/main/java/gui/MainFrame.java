@@ -170,6 +170,7 @@ public class MainFrame extends JFrame {
         logFrame.changeLocale(locale);
         gameFrame.changeLocale(locale);
         observerFrame.changeLocale(locale);
+        robotSettingsFrame.changeLocale(locale);
     }
 
     public void setLocale(Locale locale) {

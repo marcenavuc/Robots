@@ -1,4 +1,4 @@
-package gui;
+package gui.windows;
 
 import javax.swing.*;
 import java.awt.*;

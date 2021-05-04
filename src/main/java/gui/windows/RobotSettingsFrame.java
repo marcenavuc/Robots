@@ -4,13 +4,11 @@ import logic.GameObserver;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static utils.Const.baseNameBundle;
 
-public class RobotSettingsFrame extends JInternalFrame {
+public class RobotSettingsFrame extends AbstractFrame {
     private final JLabel[] labels;
     private final JTextField[] texts;
     private final JButton button;
@@ -42,9 +40,11 @@ public class RobotSettingsFrame extends JInternalFrame {
     public void changeLocale(Locale locale) {
         ResourceBundle bundle = ResourceBundle.getBundle(baseNameBundle, locale);
         super.setTitle(bundle.getString("frame.setting.robot.name"));
-        labels[0].setText(bundle.getString("frame.setting.robot.velocity"));
-        labels[1].setText(bundle.getString("frame.setting.robot.angular"));
-        labels[2].setText(bundle.getString("frame.setting.robot.live"));
+        int i = 0;
+        for (String key : Arrays.asList("frame.setting.robot.velocity",
+                "frame.setting.robot.angular", "frame.setting.robot.live"))
+            labels[i++].setText(bundle.getString(key));
+
         button.setText(ResourceBundle.getBundle(baseNameBundle, locale)
                 .getString("frame.setting.robot.accept"));
     }

@@ -9,7 +9,7 @@ import java.util.ResourceBundle;
 
 import static utils.Const.baseNameBundle;
 
-public class LogFrame extends JInternalFrame implements LogChangeListener {
+public class LogFrame extends AbstractFrame implements LogChangeListener {
     public final transient TextArea m_logContent;
     private final transient LogWindowSource m_logSource;
 

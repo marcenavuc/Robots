@@ -11,7 +11,7 @@ import javax.swing.*;
 
 import static utils.Const.baseNameBundle;
 
-public class GameFrame extends JInternalFrame {
+public class GameFrame extends AbstractFrame {
     public GameFrame(GameObserver gameObserver, Locale locale) {
         super(ResourceBundle.getBundle(baseNameBundle, locale)
                 .getString("frame.game"), true, true, true, true);

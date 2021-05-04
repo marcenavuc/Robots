@@ -1,6 +1,5 @@
 package gui.windows;
 
-import gui.AckFrame;
 import logic.Observer;
 import logic.Robot;
 import utils.Tuple;
@@ -13,27 +12,31 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import static utils.Const.baseNameBundle;
 
-public class ObserverFrame extends JInternalFrame implements Observer {
+public class ObserverFrame extends AbstractFrame implements Observer {
     private final JLabel label;
-    ResourceBundle bundle;
+    private ResourceBundle bundle;
     private long currentRobot = -1;
     private final CopyOnWriteArraySet<Long> robotsId;
-    JButton temp;
+    private final JButton button;
 
     public ObserverFrame(Locale locale) {
         super(ResourceBundle.getBundle(baseNameBundle, locale)
                 .getString("frame.coord.name"), true, true, true, true);
         robotsId = new CopyOnWriteArraySet<>();
         bundle = ResourceBundle.getBundle(baseNameBundle, locale);
-        JPanel panel = new JPanel(new GridLayout(2, 1));
         label = new JLabel(bundle.getString("frame.coord.add"), JLabel.LEFT);
-        panel.add(label);
-        temp = new JButton(bundle.getString("frame.coord.change.button"));
-        temp.addActionListener(actionEvent -> currentRobot = Long.parseLong((new AckFrame())
+        button = new JButton(bundle.getString("frame.coord.change.button"));
+        button.addActionListener(actionEvent -> currentRobot = Long.parseLong((new AckFrame())
                 .ackLanguage(
-                    "", getIdRobots(),
-                    "frame.coord.change.choose", bundle)));
-        panel.add(temp);
+                        "", getIdRobots(),
+                        "frame.coord.change.choose", bundle)));
+        addPanel();
+    }
+
+    private void addPanel() {
+        JPanel panel = new JPanel(new GridLayout(2, 1));
+        panel.add(label);
+        panel.add(button);
         add(panel);
     }
 
@@ -56,7 +59,8 @@ public class ObserverFrame extends JInternalFrame implements Observer {
     public void changeLocale(Locale locale) {
         bundle = ResourceBundle.getBundle(baseNameBundle, locale);
         super.setTitle(bundle.getString("frame.coord.name"));
-        temp.setText(bundle.getString("frame.coord.change.button"));
+        label.setText(bundle.getString("frame.coord.add"));
+        button.setText(bundle.getString("frame.coord.change.button"));
     }
 
     public void addRobot(Robot robot) {

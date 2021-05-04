@@ -11,8 +11,7 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyVetoException;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static serialization.Serializer.*;
 import static utils.Const.baseNameBundle;
@@ -21,20 +20,16 @@ public class MainFrame extends JFrame {
     private final boolean notLoad;
     private final transient JDesktopPane desktopPane = new JDesktopPane();
     protected ResourceBundle bundle;
-    public GameFrame gameFrame;
-    public LogFrame logFrame;
-    public ObserverFrame observerFrame;
-    public GameObserver gameObserver;
-    public RobotSettingsFrame robotSettingsFrame;
     public final String[] languages;
-    AckFrame ackFrame;
+    private final HashMap<String, AbstractFrame> frames;
 
     public MainFrame(boolean notLoad, String[] languages) throws PropertyVetoException {
         bundle = ResourceBundle.getBundle(baseNameBundle, Locale.getDefault());
+        frames = new HashMap<>();
         this.languages = languages;
-        ackFrame = new AckFrame();
         this.notLoad = notLoad;
         int inset = 50;
+
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setBounds(inset, inset,
                 screenSize.width - inset * 2,
@@ -44,6 +39,17 @@ public class MainFrame extends JFrame {
 
         if (notLoad || loadWindowState(Const.mainFile, this) == null)
             setExtendedState(Frame.MAXIMIZED_BOTH);
+
+        ObserverFrame observerFrame = createObserverWindow();
+        LogFrame logFrame = createLogWindow();
+        GameObserver gameObserver = new GameObserver(observerFrame);
+        RobotSettingsFrame robotSettingsFrame = createRobotsSettings(gameObserver);
+        GameFrame gameFrame = createGameWindow(gameObserver);
+
+        frames.put("observer", observerFrame);
+        frames.put("log", logFrame);
+        frames.put("game", gameFrame);
+        frames.put("robotSettings", robotSettingsFrame);
 
         InternalFrameAdapter adapter = new InternalFrameAdapter() {
             @Override
@@ -55,33 +61,19 @@ public class MainFrame extends JFrame {
                 }
             }
         };
+        for (JInternalFrame frame : frames.values()) {
+            frame.addInternalFrameListener(adapter);
+            addWindow(frame);
+        }
 
-        observerFrame = createObserverWindow();
-        observerFrame.addInternalFrameListener(adapter);
-        addWindow(observerFrame);
-        gameObserver = new GameObserver(observerFrame);
-
-        logFrame = createLogWindow();
-        logFrame.addInternalFrameListener(adapter);
-        addWindow(logFrame);
-
-        gameFrame = createGameWindow(gameObserver);
-        gameFrame.addInternalFrameListener(adapter);
-        addWindow(gameFrame);
-
-        robotSettingsFrame = createRobotsSettings(gameObserver);
-        robotSettingsFrame.addInternalFrameListener(adapter);
-        addWindow(robotSettingsFrame);
-
-        BarMenu barMenu = new BarMenu(this);
-        setJMenuBar(barMenu.generateMenuBar(ackFrame));
+        createMenuBar(bundle);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
         MainFrame temp = this;
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                if (ackFrame.ackExit(bundle.getString("bar.main.close"), bundle) == 0) {
+                if (new AckFrame().ackExit(bundle.getString("bar.main.close"), bundle) == 0) {
                     saveWindowState(gameFrame, Const.gameFile);
                     saveWindowState(logFrame, Const.logFile);
                     saveWindowState(observerFrame, Const.observerFile);
@@ -139,7 +131,7 @@ public class MainFrame extends JFrame {
     }
 
     private int addOptionPane(InternalFrameEvent event) {
-        if (ackFrame.ackExit(bundle.getString("bar.main.close"), bundle) == 0) {
+        if (new AckFrame().ackExit(bundle.getString("bar.main.close"), bundle) == 0) {
             event.getInternalFrame().setVisible(false);
             return 0;
         }
@@ -164,16 +156,13 @@ public class MainFrame extends JFrame {
     }
 
     public void changeLocale(Locale locale) {
-        bundle = ResourceBundle.getBundle(baseNameBundle, locale);
-        BarMenu barMenu = new BarMenu(this);
-        setJMenuBar(barMenu.generateMenuBar(ackFrame));
-        logFrame.changeLocale(locale);
-        gameFrame.changeLocale(locale);
-        observerFrame.changeLocale(locale);
-        robotSettingsFrame.changeLocale(locale);
+        createMenuBar(ResourceBundle.getBundle(baseNameBundle, locale));
+        for (AbstractFrame frame : frames.values())
+            frame.changeLocale(locale);
     }
 
-    public void setLocale(Locale locale) {
-        bundle = ResourceBundle.getBundle(baseNameBundle, locale);
+    private void createMenuBar(ResourceBundle bundle) {
+        BarMenu barMenu = new BarMenu(this);
+        setJMenuBar(barMenu.generateMenuBar(new AckFrame(), bundle));
     }
 }

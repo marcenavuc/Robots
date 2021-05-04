@@ -1,5 +1,6 @@
 package gui;
 
+import gui.windows.AckFrame;
 import log.Logger;
 
 import javax.swing.*;
@@ -13,49 +14,49 @@ public class BarMenu {
         this.mainFrame = mainFrame;
     }
 
-    public JMenuBar generateMenuBar(AckFrame ackFrame) {
+    public JMenuBar generateMenuBar(AckFrame ackFrame, ResourceBundle bundle) {
         JMenuBar menuBar = new JMenuBar();
-        menuBar.add(createMainMenu(ackFrame));
-        menuBar.add(createLookAndFeelMenu());
-        menuBar.add(createTestMenu());
+        menuBar.add(createMainMenu(ackFrame, bundle));
+        menuBar.add(createLookAndFeelMenu(bundle));
+        menuBar.add(createTestMenu(bundle));
         return menuBar;
     }
 
-    private JMenu createMainMenu(AckFrame ackFrame) {
-        return createMenu(mainFrame.getBundle().getString("bar.menu"), KeyEvent.VK_Q,
-                mainFrame.getBundle().getString("bar.main.menu"),
-                Arrays.asList(createItem(mainFrame.getBundle().getString("bar.main.exit"), 0, (event) -> {
-            if (ackFrame.ackExit(mainFrame.getBundle().getString("bar.main.close"), mainFrame.getBundle()) == 0) {
+    private JMenu createMainMenu(AckFrame ackFrame, ResourceBundle bundle) {
+        return createMenu(bundle.getString("bar.menu"), KeyEvent.VK_Q,
+                bundle.getString("bar.main.menu"),
+                Arrays.asList(createItem(bundle.getString("bar.main.exit"), 0, (event) -> {
+            if (ackFrame.ackExit(bundle.getString("bar.main.close"), bundle) == 0) {
                 mainFrame.unregister();
                 System.exit(0);
             }
-        }), createItem(mainFrame.getBundle().getString("bar.main.change.lan"), 0, (event) -> {
-                    String lan = ackFrame.ackLanguage("", mainFrame.languages, "bar.main.change.lan", mainFrame.getBundle());
+        }), createItem(bundle.getString("bar.main.change.lan"), 0, (event) -> {
+                    String lan = ackFrame.ackLanguage("", mainFrame.languages, "bar.main.change.lan", bundle);
                     Locale locale = Locale.forLanguageTag(lan);
                     mainFrame.changeLocale(locale);
                     })));
 
     }
 
-    private JMenu createLookAndFeelMenu() {
-        return createMenu(mainFrame.getBundle().getString("bar.display.name"), KeyEvent.VK_V,
-                mainFrame.getBundle().getString("bar.display.manage"),
-                Arrays.asList(createItem(mainFrame.getBundle().getString("bar.display.scheme.system"),
+    private JMenu createLookAndFeelMenu(ResourceBundle bundle) {
+        return createMenu(bundle.getString("bar.display.name"), KeyEvent.VK_V,
+                bundle.getString("bar.display.manage"),
+                Arrays.asList(createItem(bundle.getString("bar.display.scheme.system"),
                         KeyEvent.VK_S, (event) -> {
             setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             mainFrame.invalidate();
-        }), createItem(mainFrame.getBundle().getString("bar.display.scheme.universal"),
+        }), createItem(bundle.getString("bar.display.scheme.universal"),
                         KeyEvent.VK_S, (event) -> {
             setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
             mainFrame.invalidate();
         })));
     }
 
-    private JMenu createTestMenu() {
-        return createMenu(mainFrame.getBundle().getString("bar.test.name"),
-                KeyEvent.VK_T, mainFrame.getBundle().getString("bar.test.description"),
-                createItem(mainFrame.getBundle().getString("bar.test.text"),
-                        KeyEvent.VK_S, (event) -> Logger.debug(mainFrame.getBundle().getString("bar.test.message"))));
+    private JMenu createTestMenu(ResourceBundle bundle) {
+        return createMenu(bundle.getString("bar.test.name"),
+                KeyEvent.VK_T, bundle.getString("bar.test.description"),
+                createItem(bundle.getString("bar.test.text"),
+                        KeyEvent.VK_S, (event) -> Logger.debug(bundle.getString("bar.test.message"))));
     }
 
     private void setLookAndFeel(String className) {

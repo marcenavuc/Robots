@@ -13,7 +13,7 @@ public class GameObserver {
     private final ConcurrentHashMap<Tuple<Integer, Integer>, Food> foods;
     private final ObserverFrame observerFrame;
     private final ThreadPoolExecutor executor;
-    private final Collection<Future<?>> futures = new ArrayList<Future<?>>();
+    private Collection<Future<?>> futures = new ArrayList<Future<?>>();
 
     public double MAX_VELOCITY = 0.1;
     public double MAX_ANGULAR_VELOCITY = 0.001;
@@ -66,6 +66,7 @@ public class GameObserver {
                 e.printStackTrace();
             }
         }
+        futures = new ArrayList<Future<?>>();
     }
 
     public Collection<Food> getFoods() {

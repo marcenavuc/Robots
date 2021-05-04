@@ -25,6 +25,7 @@ public class MainFrame extends JFrame {
     public LogFrame logFrame;
     public ObserverFrame observerFrame;
     public GameObserver gameObserver;
+    public RobotSettingsFrame robotSettingsFrame;
     public final String[] languages;
     AckFrame ackFrame;
 
@@ -68,6 +69,10 @@ public class MainFrame extends JFrame {
         gameFrame.addInternalFrameListener(adapter);
         addWindow(gameFrame);
 
+        robotSettingsFrame = createRobotsSettings(gameObserver);
+        robotSettingsFrame.addInternalFrameListener(adapter);
+        addWindow(robotSettingsFrame);
+
         BarMenu barMenu = new BarMenu(this);
         setJMenuBar(barMenu.generateMenuBar(ackFrame));
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -80,6 +85,7 @@ public class MainFrame extends JFrame {
                     saveWindowState(gameFrame, Const.gameFile);
                     saveWindowState(logFrame, Const.logFile);
                     saveWindowState(observerFrame, Const.observerFile);
+                    saveWindowState(robotSettingsFrame, Const.robotSettingsFile);
                     Serializer.saveWindowState(temp, Const.mainFile);
                     System.exit(0);
                 }
@@ -122,6 +128,14 @@ public class MainFrame extends JFrame {
             observerFrame.setSize(200, 100);
         }
         return observerFrame;
+    }
+
+    protected RobotSettingsFrame createRobotsSettings(GameObserver gameObserver) throws PropertyVetoException {
+        RobotSettingsFrame frame = new RobotSettingsFrame(gameObserver, bundle.getLocale());
+        if (notLoad || loadWindowState(Const.robotSettingsFile, frame) == null) {
+            frame.setSize(300, 400);
+        }
+        return frame;
     }
 
     private int addOptionPane(InternalFrameEvent event) {

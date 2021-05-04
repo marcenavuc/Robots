@@ -1,7 +1,6 @@
 package logic;
 
 import gui.windows.ObserverFrame;
-import utils.Core;
 import utils.Tuple;
 
 import java.util.Collection;
@@ -12,18 +11,17 @@ public class GameObserver {
     private final ConcurrentHashMap<Long, Robot> robots;
     private final ConcurrentHashMap<Tuple<Integer, Integer>, Food> foods;
     private final ObserverFrame observerFrame;
-    private final ThreadPoolExecutor executor
-            = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
+    private final ThreadPoolExecutor executor;
 
+    public double MAX_VELOCITY = 0.1;
+    public double MAX_ANGULAR_VELOCITY = 0.001;
+    private long MAX_LIVE_WITHOUT_FOOD = 1000 * 20;
 
     public GameObserver(ObserverFrame observerFrame) {
         this.observerFrame = observerFrame;
         robots = new ConcurrentHashMap<>();
         foods = new ConcurrentHashMap<>();
-//        initTimer();
-//        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
-//        for (Robot robot : robots.values())
-//            executor.submit(robot);
+        executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
     }
 
     public void attachFoodToRobot(Robot robot, Food food) {
@@ -45,17 +43,12 @@ public class GameObserver {
         if (robots.keySet().size() == 0)
             return;
 
-        //robots.removeIf(robot -> robot.getHunger() < 0);
         for (long idxRobot: robots.keySet()) {
             Robot robot = robots.get(idxRobot);
             if (robot.isAlive) {
-//                if (!robot.checkStart())
-//                    robot.start();
-//                robots.get(idxRobot).update();
                 executor.submit(robot);
             }
             else {
-//                robot.interrupt();
                 observerFrame.delRobot(robot.getId());
                 robots.remove(idxRobot);
             }
@@ -77,7 +70,8 @@ public class GameObserver {
     }
 
     public void addRobot(int x, int y) {
-        Robot robot = new Robot(x, y, counters++);
+        Robot robot = new Robot(x, y, counters++,
+                MAX_VELOCITY, MAX_ANGULAR_VELOCITY, MAX_LIVE_WITHOUT_FOOD);
         observerFrame.addRobot(robot);
         robot.addObserver(this);
         robots.put(robot.getId(), robot);
@@ -93,12 +87,6 @@ public class GameObserver {
         double distance = Double.MAX_VALUE;
         Food nearestFood = null;
         for (Food food : foods.values()) {
-
-//            double currentDistance = Core.findDistance(
-//                    robot.getRobotPosition().getKey(),
-//                    robot.getRobotPosition().getValue(),
-//                    food.getPositionX(),
-//                    food.getPositionY());
             double currentDistance = Core.findDistance(robot, food);
 
             if (currentDistance < distance) {
@@ -115,5 +103,11 @@ public class GameObserver {
             Food nearestFood = findClosedFoodToRobot(robot);
             attachFoodToRobot(robot, nearestFood);
         }
+    }
+
+    public void setConstForRobots(double v1, double v2, long v3) {
+        MAX_VELOCITY = v1;
+        MAX_ANGULAR_VELOCITY = v2;
+        MAX_LIVE_WITHOUT_FOOD = v3 * 1000;
     }
 }

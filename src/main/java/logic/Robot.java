@@ -4,15 +4,16 @@ import utils.Tuple;
 
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static utils.Core.*;
+import static logic.Core.*;
 
 public class Robot implements Observable, Runnable {
-    private java.util.List<Observer> listObservers;
+    private final List<Observer> listObservers;
     private volatile Tuple<Double, Double> robotPosition;
     private volatile double robotDirection = 0;
     private GameObserver gameObserver;
@@ -21,15 +22,12 @@ public class Robot implements Observable, Runnable {
     private double satiety = 0;
     private volatile int hunger = 0;
 
-    public final double MAX_VELOCITY = 0.1;
-    public final double MAX_ANGULAR_VELOCITY = 0.001;
-    private final long MAX_LIVE_WITHOUT_FOOD = 1000 * 20;
+    public final double MAX_VELOCITY;
+    public final double MAX_ANGULAR_VELOCITY;
+    public final long MAX_LIVE_WITHOUT_FOOD;
 
     public boolean isAlive;
-//    private final Thread thread;
     private Timer timer;
-    public static Lock lock = new ReentrantLock();
-    public boolean isPainted = false;
     private final long id;
 
 
@@ -37,24 +35,24 @@ public class Robot implements Observable, Runnable {
         this.id = id;
         listObservers = new ArrayList<>();
         setRobotPosition(robotPositionX, robotPositionY);
-//        thread = new Thread(this);
-//        thread.setDaemon(true);
         isAlive = true;
+        MAX_LIVE_WITHOUT_FOOD = 1000 * 5;
+        MAX_ANGULAR_VELOCITY = 0.001;
+        MAX_VELOCITY = 0.1;
         initTimer();
-
     }
 
-//    public void start() {
-//        thread.start();
-//    }
-//
-//    public void interrupt() {
-//        thread.interrupt();
-//    }
-//
-//    public boolean checkStart() {
-//        return thread.isAlive();
-//    }
+    public Robot(double robotPositionX, double robotPositionY, long id,
+                 double v1, double v2, long v3) {
+        this.id = id;
+        listObservers = new ArrayList<>();
+        setRobotPosition(robotPositionX, robotPositionY);
+        isAlive = true;
+        MAX_VELOCITY = v1;
+        MAX_ANGULAR_VELOCITY = v2;
+        MAX_LIVE_WITHOUT_FOOD = v3;
+        initTimer();
+    }
 
     public void addObserver(GameObserver gameObserver) {
         this.gameObserver = gameObserver;
@@ -70,7 +68,8 @@ public class Robot implements Observable, Runnable {
     }
 
     private boolean canEat() {
-        return targetPosition != null && findDistance(targetPosition.getKey(), targetPosition.getValue(), robotPosition.getKey(), robotPosition.getValue()) < 0.5;
+        return targetPosition != null && findDistance(targetPosition.getKey(), targetPosition.getValue(),
+                robotPosition.getKey(), robotPosition.getValue(), MAX_ANGULAR_VELOCITY) < 0.5;
     }
 
     public void eat() {
@@ -150,21 +149,13 @@ public class Robot implements Observable, Runnable {
 
     @Override
     public void run() {
-//        while (isAlive) {
-//            isPainted = false;
-//            update();
-//            lock.lock();
-//        }
         update();
     }
 
     private class CheckAliveRobot extends TimerTask {
         public void run() {
-            //            for (long id : robots.keySet()) {
-            //                Robot robot = robots.get(id);
             if (getHunger() <= 0) {
                 isAlive = false;
-                //getMapRobots().remove(id);
                 timer.cancel();
             } else
                 vichHunger();

@@ -2,7 +2,7 @@ package gui.windows;
 
 import gui.GameVisualizer;
 import logic.GameObserver;
-import utils.Core;
+import logic.Core;
 
 import java.awt.*;
 import java.util.Locale;
@@ -12,20 +12,17 @@ import javax.swing.*;
 import static utils.Const.baseNameBundle;
 
 public class GameFrame extends JInternalFrame {
-    private GameVisualizer gameVisualizer;
     public GameFrame(GameObserver gameObserver, Locale locale) {
         super(ResourceBundle.getBundle(baseNameBundle, locale)
                 .getString("frame.game"), true, true, true, true);
         JPanel panel = new JPanel(new BorderLayout());
-        gameVisualizer = new GameVisualizer(gameObserver);
-        panel.add(gameVisualizer, BorderLayout.CENTER);
+        panel.add(new GameVisualizer(gameObserver), BorderLayout.CENTER);
         getContentPane().add(panel);
         pack();
     }
 
     public void updateSize() {
         Core.setSize(getWidth(), getHeight());
-        //gameVisualizer.setSize();
     }
 
     public void changeLocale(Locale locale) {

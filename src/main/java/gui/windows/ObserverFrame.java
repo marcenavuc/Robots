@@ -1,6 +1,7 @@
 package gui.windows;
 
 import gui.AckFrame;
+import logic.Observer;
 import logic.Robot;
 import utils.Tuple;
 
@@ -12,11 +13,11 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import static utils.Const.baseNameBundle;
 
-public class ObserverFrame extends JInternalFrame implements logic.Observer {
-    private JLabel label;
+public class ObserverFrame extends JInternalFrame implements Observer {
+    private final JLabel label;
     ResourceBundle bundle;
     private long currentRobot = -1;
-    private CopyOnWriteArraySet<Long> robotsId;
+    private final CopyOnWriteArraySet<Long> robotsId;
 
     public ObserverFrame(Locale locale) {
         super(ResourceBundle.getBundle(baseNameBundle, locale)
@@ -36,15 +37,18 @@ public class ObserverFrame extends JInternalFrame implements logic.Observer {
     }
 
     @Override
-    public void update(Tuple<Double, Double> m_robotPos, double m_robotDirect, Tuple<Integer, Integer> m_targetPos, long id) {
+    public void update(Tuple<Double, Double> m_robotPos,
+                       double m_robotDirect,
+                       Tuple<Integer, Integer> m_targetPos,
+                       long id) {
         if (currentRobot == id)
-            this.label.setText("          " + bundle.getString("frame.coord.description")
-                + Math.round(m_robotPos.getKey()) + "    " + Math.round(m_robotPos.getValue()));
+            this.label.setText(bundle.getString("frame.coord.description") +
+                "X:" + Math.round(m_robotPos.getKey()) + "  ---|---  Y:" + Math.round(m_robotPos.getValue()));
         else
             if (currentRobot == -1) {
                 currentRobot = id;
-                this.label.setText("          " + bundle.getString("frame.coord.description")
-                        + Math.round(m_robotPos.getKey()) + "    " + Math.round(m_robotPos.getValue()));
+                this.label.setText(bundle.getString("frame.coord.description") +
+                        "X:" + Math.round(m_robotPos.getKey()) + "  ---|---  Y:" + Math.round(m_robotPos.getValue()));
             }
     }
 

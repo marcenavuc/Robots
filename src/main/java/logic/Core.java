@@ -1,17 +1,18 @@
-package utils;
+package logic;
 
-import logic.Food;
-import logic.Robot;
+import utils.Tuple;
 
 public class Core {
     public static int widthField;
     public static int heightField;
 
     public static double findDistance(Robot robot, Food food) {
-        double distance = findDistance(robot.getRobotPosition().getKey(),
-                                       robot.getRobotPosition().getValue(),
-                                       food.getPositionX(),
-                                       food.getPositionY());
+        double distance = findDistance(
+                robot.getRobotPosition().getKey(),
+                robot.getRobotPosition().getValue(),
+                food.getPositionX(),
+                food.getPositionY(),
+                robot.MAX_ANGULAR_VELOCITY);
         double angle = angleTo(robot.getRobotPosition().getKey(),
                                robot.getRobotPosition().getValue(),
                                food.getPositionX(),
@@ -20,7 +21,7 @@ public class Core {
     }
 
     public static double findDistance(double x1, double y1,
-                                   double x2, double y2) {
+                                   double x2, double y2, double v1) {
         double diffX = x1 - x2;
         double diffY = y1 - y2;
         return Math.sqrt(diffX * diffX + diffY * diffY);
@@ -51,10 +52,10 @@ public class Core {
     }
 
     public static double getNewCoordinates(Tuple<Double, Double> robotPosition,
-                                     double robotDirection,
-                                     double velocity,
-                                     double angularVelocity,
-                                     double duration, boolean x) {
+                                           double robotDirection,
+                                           double velocity,
+                                           double angularVelocity,
+                                           double duration, boolean x) {
         if (x) {
             double newX = robotPosition.getKey() + velocity / angularVelocity *
                     (Math.sin(robotDirection  + angularVelocity * duration) -

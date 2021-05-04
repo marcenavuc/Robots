@@ -5,6 +5,7 @@ import logic.GameObserver;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static utils.Const.baseNameBundle;
@@ -30,9 +31,9 @@ public class RobotSettingsFrame extends JInternalFrame {
         }
         button = new JButton("");
         button.addActionListener(actionEvent -> gameObserver.setConstForRobots(
-                Double.parseDouble(texts[0].getText()),
-                Double.parseDouble(texts[1].getText()),
-                Long.parseLong(texts[2].getText())));
+                parseStringToDouble(texts[0].getText()),
+                parseStringToDouble(texts[1].getText()),
+                parseStringToLong(texts[2].getText())));
         panel.add(button);
         changeLocale(locale);
         getContentPane().add(panel);
@@ -46,5 +47,13 @@ public class RobotSettingsFrame extends JInternalFrame {
         labels[2].setText(bundle.getString("frame.setting.robot.live"));
         button.setText(ResourceBundle.getBundle(baseNameBundle, locale)
                 .getString("frame.setting.robot.accept"));
+    }
+
+    private static double parseStringToDouble(String value) {
+        return value == null || value.equals("") ? 0.0d : Double.parseDouble(value);
+    }
+
+    private static long parseStringToLong(String value) {
+        return value == null || value.equals("") ? 0 : Long.parseLong(value);
     }
 }
